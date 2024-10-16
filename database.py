@@ -21,7 +21,10 @@ class BlockchainDb:
         Save the blockchain to Firebase.
 
         :param blockchain: The Blockchain instance to save
+        
         """
+        
+        self.ref  = db.reference('blockchain')
         try:
             unique_chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in blockchain.chain).values())
             unique_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in blockchain.current_transactions).values())
@@ -54,17 +57,29 @@ class BlockchainDb:
         """
         try:
             data = self.ref.get()
+            ref = self.ref
 
             if not data:
                 print("No data found in Firebase. Starting with a new blockchain.")
                 return False
+            print("retriving data from firebase")
+            blockchain.chain = ref.get('chain', [])
+            print("retrived data from firebase" , ref.get('chain', []))
 
-            blockchain.chain = data.get('chain', [])
-            blockchain.current_transactions = data.get('current_transactions', [])
+            blockchain.current_transactions = ref.get('current_transactions', [])
 
             # Ensure nodes are converted back to hashable types (set requires hashable types)
-            blockchain.nodes = set(tuple(node) if isinstance(node, list) else node for node in data.get('nodes', []))
-            blockchain.ttl = data.get('ttl', blockchain.ttl)
+            nodes_list = []
+            ref = db.reference('blockchain')
+            for node in ref.get('nodes', []):
+                available_node  = ref.get(node, "")
+                nodes_list.append(available_node)
+            
+            ref = db.reference('blockchain')
+            
+            
+            blockchain.nodes = set(nodes_list)
+            blockchain.ttl = ref.get('ttl', blockchain.ttl)
 
             # Rebuild hash_list
             blockchain.hash_list = set(blockchain.hash(block) for block in blockchain.chain)
