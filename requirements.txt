@@ -1,8 +1,13 @@
-base64
+pybase64
 Flask
 Flask-Cors
 requests
 schedule
 ecdsa
-ellipticcurve
 firebase-admin
+Flask
+ecdsa
+base58
+starkbank-ecdsa
+elliptic-curve
+Flask-CORS
