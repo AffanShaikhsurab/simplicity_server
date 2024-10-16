@@ -1,0 +1,55 @@
+{
+    "chain": [
+        {
+            "index": 3,
+            "timestamp": 1728719089.108427,
+            "transactions": [
+                {
+                    "transaction": {
+                        "sender": "0",
+                        "recipient": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
+                        "amount": 52.0,
+                        "timestamp": 1728719089.1064272,
+                        "transaction_id": "ea512f81d586fa2a0aba5a377235db7b394f08d2d49b13a6516544faac57fe52",
+                        "public_address": ""
+                    },
+                    "public_address": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
+                    "digital_signature": "MEUCIQD/7w4jlAY+F6Ky/s+9IriWcbue2ICYTlyd1NFA6XTeJwIgZ/aEF/hqAr8sEOB8pg65Qjwp5dAQ+xEFDZcudM9IN8E="
+                },
+                {
+                    "transaction": {
+                        "sender": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
+                        "recipient": "a",
+                        "amount": 1.0,
+                        "timestamp": 1728719049.4710655,
+                        "transaction_id": "a97c9c61e7c76e634dfe32e418bb515e60f98892b2da25f8a34e28a233fea0cd"
+                    },
+                    "public_key": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
+                    "digital_signature": "MEUCIQDkUixn/pF+iwb0tiNtDCQ7/R/UAaj1grqfn1189iB92gIgDDOEOgv5ZFFq6xjLC4sr/9UArKeBOQGluUebDQkz8V8="
+                },
+                {
+                    "transaction": {
+                        "sender": "sd",
+                        "recipient": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
+                        "amount": 1.0,
+                        "timestamp": 1728719088.979047,
+                        "transaction_id": "746159f2496ae3fc2536b98ea253c554d0534f4444478ee61b9d3c951bae06b2"
+                    },
+                    "public_address": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
+                    "digital_signature": "MEUCIGNfqQKSdRKkaWY2C+pSbT5vFN+kl9BaBKNP8qwSf9vkAiEAloIcdUhw0WpoWtLg7h+/dzMjm505kWs1jU7tws7B2+s="
+                }
+            ],
+            "proof": 153122,
+            "previous_hash": "e7ac8516346aa8fd3b1f34917bd2efe8e15e9317588aa95a5ecf7da3647b2afb"
+        }
+    ],
+    "current_transactions": [],
+    "nodes": [
+        "127.0.0.1:5001",
+        "127.0.0.1:5000",
+        "127.0.0.1:5002",
+        "192.168.29.49:5000",
+        "192.168.244.1:3197",
+        "192.168.29.49:5001"
+    ]
+}
