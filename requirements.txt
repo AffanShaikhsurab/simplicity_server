@@ -1,0 +1,8 @@
+base64
+Flask
+Flask-Cors
+requests
+schedule
+ecdsa
+ellipticcurve
+firebase-admin
