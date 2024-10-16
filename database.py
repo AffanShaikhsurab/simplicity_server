@@ -25,14 +25,17 @@ class BlockchainDb:
         """
         unique_chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in blockchain.chain).values())
         unique_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in blockchain.current_transactions).values())
-
+        if not unique_chain or not unique_transactions:
+            print("No data to save to Firebase. Starting with a new blockchain.")
+            return
+        
         data = {
             'chain': unique_chain,
             'current_transactions': unique_transactions,
             'nodes': list(blockchain.nodes),
             'ttl': blockchain.ttl
         }
-
+        
         self.ref.set(data)
         print("Blockchain saved to Firebase")
 
