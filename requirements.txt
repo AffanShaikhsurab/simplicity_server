@@ -4,7 +4,6 @@ Flask-Cors
 requests
 schedule
 ecdsa
-ellipticcurve
 firebase-admin
 Flask
 ecdsa
