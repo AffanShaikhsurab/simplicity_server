@@ -116,9 +116,7 @@ class Blockchain:
         if len(self.chain) == 0:
             print("No chain found. Starting with a new chain.")
             return self.chain
-        print(
-            "Length of the chain is " + str(len(self.chain))
-        )
+        
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
             previous_block = self.chain[i-1]
