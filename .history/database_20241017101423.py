@@ -3,11 +3,9 @@ from collections import OrderedDict
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-import os
 
 firebase_cred_path = "simplicity-coin-firebase-adminsdk-ghiek-54e4d6ed9d.json"
 database_url = "https://simplicity-coin-default-rtdb.firebaseio.com/"
-local_file_path = "blockchain.json"
 
 class BlockchainDb:
     def __init__(self):
@@ -20,20 +18,24 @@ class BlockchainDb:
 
     def save_blockchain(self, blockchain):
         """
-        Save the blockchain to a local JSON file.
-        
+        Save the blockchain to Firebase.
+
         :param blockchain: The Blockchain instance to save
+        
         """
+        
+        ref  = db.reference('blockchain')
         try:
             unique_chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in blockchain.chain).values())
             unique_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in blockchain.current_transactions).values())
-            
+
             if not unique_chain or not unique_transactions:
-                print("No data to save. Starting with a new blockchain.")
+                print("No data to save to Firebase. Starting with a new blockchain.")
                 return
-            
+
+            # Ensure nodes are stored as hashable types (e.g., converting lists to tuples if necessary)
             hashable_nodes = set(tuple(node) if isinstance(node, list) else node for node in blockchain.nodes)
-            
+
             data = {
                 'chain': unique_chain,
                 'current_transactions': unique_transactions,
@@ -41,58 +43,54 @@ class BlockchainDb:
                 'ttl': blockchain.ttl
             }
             
-            with open(local_file_path, 'w') as f:
-                json.dump(data, f, indent=2)
-            print("Blockchain saved to local file")
+            print(
+                "the data is : ", data
+            )
+
+            ref.set(data)
+            print("Blockchain saved to Firebase")
         except Exception as e:
-            print(f"Error saving blockchain to local file: {e}")
+            print(f"Error saving blockchain: {e}")
 
     def load_blockchain(self, blockchain):
         """
         Load the blockchain from Firebase.
-        
+
         :param blockchain: The Blockchain instance to update
         :return: True if loaded successfully, False otherwise
         """
         try:
             data = self.ref.get()
-            
+            ref = self.ref
+
             if not data:
                 print("No data found in Firebase. Starting with a new blockchain.")
                 return False
-            
-            print("Retrieving data from Firebase")
-            blockchain.chain = data.get('chain', [])
-            blockchain.current_transactions = data.get('current_transactions', [])
-            
+            print("retriving data from firebase")
+            blockchain.chain = ref.get('chain', [])
+            print("retrived data from firebase" , ref.get('chain', []))
+
+            blockchain.current_transactions = ref.get('current_transactions', [])
+
             # Ensure nodes are converted back to hashable types (set requires hashable types)
-            blockchain.nodes = set(tuple(node) if isinstance(node, list) else node for node in data.get('nodes', []))
-            blockchain.ttl = data.get('ttl', blockchain.ttl)
+            nodes_list = []
+            ref = db.reference('blockchain')
+            for node in ref.get('nodes', []):
+                available_node  = ref.get(node, "")
+                nodes_list.append(available_node)
             
+            ref = db.reference('blockchain')
+            
+            print("nodes" ,nodes_list)
+            
+            blockchain.nodes = set(nodes_list)
+            blockchain.ttl = ref.get('ttl', blockchain.ttl)
+            print("ttl" ,  blockchain.ttl )
             # Rebuild hash_list
             blockchain.hash_list = set(blockchain.hash(block) for block in blockchain.chain)
-            
+
             print("Blockchain loaded from Firebase")
             return True
         except Exception as e:
-            print(f"Error loading blockchain from Firebase: {e}")
+            print(f"Error loading blockchain: {e}")
             return False
-
-    def save_to_firebase(self):
-        """
-        Save the blockchain from the local JSON file to Firebase.
-        """
-        try:
-            if not os.path.exists(local_file_path):
-                print("No local data found to save to Firebase.")
-                return
-            
-            with open(local_file_path, 'r') as f:
-                data = json.load(f)
-            self.ref.delete()
-            print("Deleting data from Firebase")
-            self.ref = db.reference('blockchain')
-            self.ref.set(data)
-            print("Blockchain saved to Firebase")
-        except Exception as e:
-            print(f"Error saving blockchain to Firebase: {e}")

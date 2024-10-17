@@ -89,9 +89,7 @@ class BlockchainDb:
             
             with open(local_file_path, 'r') as f:
                 data = json.load(f)
-            self.ref.delete()
-            print("Deleting data from Firebase")
-            self.ref = db.reference('blockchain')
+            
             self.ref.set(data)
             print("Blockchain saved to Firebase")
         except Exception as e:

@@ -46,7 +46,6 @@ class Blockchain(object):
         self.max_mempool  = 2
         self.new_block( proof=100 , prev_hash =1  )
         self.error = ""
-        
         database = BlockchainDb()
         db_chain = database.load_blockchain(self )
         
@@ -124,10 +123,6 @@ class Blockchain(object):
     
     def validate_loaded_chain(self):
         """Validate the loaded chain for integrity."""
-
-        if len(self.chain) == 0:
-            return self.chain
-        
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
             previous_block = self.chain[i-1]
