@@ -25,12 +25,10 @@ class BlockchainDb:
         :param blockchain: The Blockchain instance to save
         """
         try:
-            print("Saving blockchain to local file")
-
             unique_chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in blockchain.chain).values())
             unique_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in blockchain.current_transactions).values())
             
-            if not unique_chain:
+            if not unique_chain or not unique_transactions:
                 print("No data to save. Starting with a new blockchain.")
                 return
             
@@ -57,7 +55,6 @@ class BlockchainDb:
         :return: True if loaded successfully, False otherwise
         """
         try:
-            self.ref = db.reference('blockchain')
             data = self.ref.get()
             
             if not data:
@@ -65,25 +62,18 @@ class BlockchainDb:
                 return False
             
             print("Retrieving data from Firebase")
-            chain = data.get('chain', [])
-            current_transactions = data.get('current_transactions', [])
+            blockchain.chain = data.get('chain', [])
+            blockchain.current_transactions = data.get('current_transactions', [])
             
             # Ensure nodes are converted back to hashable types (set requires hashable types)
-            nodes = set(tuple(node) if isinstance(node, list) else node for node in data.get('nodes', []))
-            ttl = data.get('ttl', blockchain.ttl)
+            blockchain.nodes = set(tuple(node) if isinstance(node, list) else node for node in data.get('nodes', []))
+            blockchain.ttl = data.get('ttl', blockchain.ttl)
             
-            # Rebuild hash_list
-            
-            blockchain.chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in chain).values())
-            if blockchain.current_transactions != []:
-                blockchain.current_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in current_transactions).values())
-            blockchain.nodes =nodes
-            blockchain.ttl = ttl
             # Rebuild hash_list
             blockchain.hash_list = set(blockchain.hash(block) for block in blockchain.chain)
-            
-            
             self.save_blockchain(blockchain)
+            
+            print("Blockchain loaded from Firebase")
             return True
         except Exception as e:
             print(f"Error loading blockchain from Firebase: {e}")

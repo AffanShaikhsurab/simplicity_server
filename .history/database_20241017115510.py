@@ -18,15 +18,16 @@ class BlockchainDb:
             })
         self.ref = db.reference('blockchain')
 
-    def save_blockchain(self, blockchain):
+    def save_blockchain(self):
         """
         Save the blockchain to a local JSON file.
         
         :param blockchain: The Blockchain instance to save
         """
         try:
-            print("Saving blockchain to local file")
-
+            if not os.path.exists(local_file_path):
+                print("No local data found. Starting with a new blockchain.")
+                return
             unique_chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in blockchain.chain).values())
             unique_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in blockchain.current_transactions).values())
             
@@ -59,29 +60,28 @@ class BlockchainDb:
         try:
             self.ref = db.reference('blockchain')
             data = self.ref.get()
+            print("Retrieving data from Firebase" , data)
             
             if not data:
                 print("No data found in Firebase. Starting with a new blockchain.")
                 return False
             
             print("Retrieving data from Firebase")
-            chain = data.get('chain', [])
-            current_transactions = data.get('current_transactions', [])
+            blockchain.chain = data.get('chain', [])
+            blockchain.current_transactions = data.get('current_transactions', [])
             
             # Ensure nodes are converted back to hashable types (set requires hashable types)
-            nodes = set(tuple(node) if isinstance(node, list) else node for node in data.get('nodes', []))
-            ttl = data.get('ttl', blockchain.ttl)
+            blockchain.nodes = set(tuple(node) if isinstance(node, list) else node for node in data.get('nodes', []))
+            blockchain.ttl = data.get('ttl', blockchain.ttl)
             
-            # Rebuild hash_list
-            
-            blockchain.chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in chain).values())
-            if blockchain.current_transactions != []:
-                blockchain.current_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in current_transactions).values())
-            blockchain.nodes =nodes
-            blockchain.ttl = ttl
             # Rebuild hash_list
             blockchain.hash_list = set(blockchain.hash(block) for block in blockchain.chain)
             
+            print("The length of the blockchain is " + str(len(blockchain.chain)))
+            print("The length of the current transactions is " + str(len(blockchain.current_transactions)))
+            print("The length of the nodes is " + str(len(blockchain.nodes)))
+            print("The length of the hash_list is " + str(len(blockchain.hash_list)))
+            print("Blockchain loaded from Firebase")
             
             self.save_blockchain(blockchain)
             return True

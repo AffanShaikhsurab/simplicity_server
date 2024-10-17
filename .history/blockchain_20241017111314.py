@@ -24,27 +24,31 @@ from database import BlockchainDb
 
 firebase_cred_path = "simplicity-coin-firebase-adminsdk-ghiek-54e4d6ed9d.json"
 
-class Blockchain:
-
-
+class Blockchain(object):
     def __init__(self):
+        """
+        Initialize the Blockchain
 
+        :param proof: <int> The proof given by the Proof of Work algorithm
+        :param previous_hash: (Optional) <str> Hash of previous Block
+        :return: <dict> New Block
+        """
         self.chain = []
         self.current_transactions = []
         self.hash_list = set()
         self.nodes = set()
-        self.ttl = {}
-        self.public_address = ""
+        self.ttl : dict= {}
+        self.public_address= ""
         self.private_address = ""
         self.ip_address = ""
         self.target = 4  # Easy target value
         self.max_block_size = 1000000  
-        self.max_mempool = 2
-        self.new_block(proof=100, prev_hash=1)
+        self.max_mempool  = 2
+        self.new_block( proof=100 , prev_hash =1  )
         self.error = ""
         
         database = BlockchainDb()
-        db_chain = database.load_blockchain(self)
+        db_chain = database.load_blockchain(self )
         
         self.mining_thread = None
         self.should_mine = False
@@ -54,17 +58,25 @@ class Blockchain:
         accounts_data = accountDb.account_data
         for account in accounts_data:
             if account['publicKey']:
-                self.public_key = account['publicKey']
+            
+                self.publoc_key = account['publicKey']
             if account['privateKey']:
                 self.private_address = account['privateKey']
                 
-        print("the db chain is : ", db_chain)
         if db_chain:
-            chain = self.validate_loaded_chain()
-            print("the validated chain is : ", chain)
-            if chain:
-                self.chain = chain
-        
+            self.chain = self.validate_loaded_chain()
+                # print("Loaded chain is invalid. Starting with a new blockchain.")
+                
+                # #getting the longest chain in the network
+                # self.resolve_conflicts()
+                # #resetting the blockchain
+                # # self.hash_list = set()
+                # # self.chain = []
+                # # self.nodes = set()
+                # # self.current_transactions = []
+                # # self.new_block( proof=100 , prev_hash =1 )
+
+                
         self.start_scheduled_mining()
     def Blockchain(self , public_address):
         self.public_address = public_address
@@ -114,17 +126,14 @@ class Blockchain:
         """Validate the loaded chain for integrity."""
 
         if len(self.chain) == 0:
-            print("No chain found. Starting with a new chain.")
             return self.chain
         
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
             previous_block = self.chain[i-1]
             if current_block['previous_hash'] != self.hash(previous_block):
-                print("Loaded chain is valid. lenght is " + str(len(self.chain)))
                 return self.chain[:i-1]
             if not self.valid_proof(previous_block['proof'], current_block['proof'] , self.target):
-                print("Loaded chain is valid. lenght is " + str(len(self.chain)))
                 return self.chain[:i-1]
         print("Loaded chain is valid. lenght is " + str(len(self.chain)))
         return self.chain    
@@ -406,7 +415,6 @@ class Blockchain:
             
 
     def start_scheduled_mining(self):
-        print("the chain is " , self.chain)
         schedule.every(10).minutes.do(self.scheduled_mine)
         threading.Thread(target=self.run_schedule, daemon=True).start()
 

@@ -7,7 +7,6 @@ import requests
 from blockchain import Blockchain
 from database import BlockchainDb
 from flask_cors import CORS  # Import CORS
-import atexit
 
 app = flask.Flask(__name__)
 from flask import Flask, copy_current_request_context, g, request, jsonify
@@ -17,20 +16,26 @@ CORS(app)
 
 blockchain = Blockchain()
 
+# Use app.before_request to ensure g.blockchain is initialized before each request
+@app.before_request
+def before_request():
+    g.blockchain = blockchain
+    
+    
 @app.route('/hello', methods=['GET'])
 def hello():
+    
     return flask.jsonify({
-        'nodes': list(blockchain.nodes),
-        'length': len(list(blockchain.nodes))
+        'nodes': list(g.blockchain.nodes),
+        'length': len(list(g.blockchain.nodes))
     })
 
 
 @app.route('/chain', methods=['GET'])
 def chain():
-    print("the length of the blockchain is " + str(len(blockchain.chain)))
     return flask.jsonify({
-        'chain': blockchain.chain,
-        'length': len(blockchain.chain)
+        'chain': g.blockchain.chain,
+        'length': len(g.blockchain.chain)
     })
 
 
@@ -44,7 +49,7 @@ def new_transaction():
         return 'Missing values', 400
 
     # Create a new Transaction
-    index, error = blockchain.new_transaction(values['transaction'], values['public_key'], values['digital_signature'])
+    index, error = g.blockchain.new_transaction(values['transaction'], values['public_key'], values['digital_signature'])
     if index is not None:
         response = {'message': f'Transaction will be added to Block {index}'}
     else:
@@ -61,12 +66,12 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node", "simplicity_server.onrender.com")
-        blockchain.register_node(node, "simplicity_server.onrender.com")
+        print("this is parent node", "simplicity_server1.onrender.com")
+        g.blockchain.register_node(node, "simplicity_server1.onrender.com")
 
     response = {
         'message': 'New nodes have been added',
-        'total_nodes': list(blockchain.nodes),
+        'total_nodes': list(g.blockchain.nodes),
     }
     return flask.jsonify(response), 201
 
@@ -80,13 +85,13 @@ def update_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node", "simplicity_server.onrender.com")
-        if node not in blockchain.nodes:
-            blockchain.nodes.add(node)
+        print("this is parent node", "simplicity_server1.onrender.com")
+        if node not in g.blockchain.nodes:
+            g.blockchain.nodes.add(node)
 
     response = {
         'message': 'New nodes have been added',
-        'total_nodes': list(blockchain.nodes),
+        'total_nodes': list(g.blockchain.nodes),
     }
     return flask.jsonify(response), 201
 
@@ -100,26 +105,26 @@ def update_ttl():
     if update_nodes is None:
         return "Error: Please supply a valid list of nodes", 400
 
-    blockchain.updateTTL(update_nodes , node )
+    g.blockchain.updateTTL(update_nodes , node )
     response = {
         'message': 'The TTL of nodes have been updated',
-        'total_nodes': list(blockchain.nodes),
+        'total_nodes': list(g.blockchain.nodes),
     }
     return flask.jsonify(response), 201
 
 @app.route('/nodes/resolve', methods=['GET'])
 def consensus():
-    replaced = blockchain.resolve_conflicts()
+    replaced = g.blockchain.resolve_conflicts()
 
     if replaced:
         response = {
             'message': 'Our chain was replaced',
-            'new_chain': blockchain.chain
+            'new_chain': g.blockchain.chain
         }
     else:
         response = {
             'message': 'Our chain is authoritative',
-            'chain': blockchain.chain
+            'chain': g.blockchain.chain
         }
 
     return flask.jsonify(response), 200
@@ -129,21 +134,21 @@ def consensus():
 def update_block():
     block = flask.request.get_json()
     print("this is block", block)
-    if blockchain.hash(block) in blockchain.hash_list:
+    if g.blockchain.hash(block) in g.blockchain.hash_list:
         return flask.jsonify(f"Already added Block in the network {block}"), 200
     else:
         for transaction in block['transactions']:
-            if transaction in blockchain.current_transactions:
-                blockchain.current_transactions.remove(transaction)
+            if transaction in g.blockchain.current_transactions:
+                g.blockchain.current_transactions.remove(transaction)
 
-        blockchain.chain.append(block)
-        blockchain.hash_list.add(blockchain.hash(block))
+        g.blockchain.chain.append(block)
+        g.blockchain.hash_list.add(g.blockchain.hash(block))
 
         # send data to the known nodes in the network
-        for node in blockchain.nodes:
+        for node in g.blockchain.nodes:
             requests.post(f'http://{node}/nodes/update_block', json=block, timeout=5)
             requests.post(f'http://{node}/nodes/update_nodes', json={
-                "nodes": list(blockchain.nodes)
+                "nodes": list(g.blockchain.nodes)
             })
 
     return flask.jsonify(f"Added Block to the network {block}"), 200
@@ -153,15 +158,15 @@ def update_block():
 def update_transaction():
     transaction = flask.request.get_json()
 
-    if transaction.get('id') in [t.get('id') for t in blockchain.current_transactions]:
+    if transaction.get('id') in [t.get('id') for t in g.blockchain.current_transactions]:
         return flask.jsonify({"message": f"Transaction already in the network", "transaction": transaction}), 200
 
-    blockchain.current_transactions.append(transaction)
-    blockchain.miner()
+    g.blockchain.current_transactions.append(transaction)
+    g.blockchain.miner()
 
     # Send data to the known nodes in the network
     failed_nodes = []
-    for node in blockchain.nodes:
+    for node in g.blockchain.nodes:
         try:
             response = requests.post(f'http://{node}/nodes/update_transaction', json=transaction, timeout=5)
             if response.status_code != 200:
@@ -182,45 +187,48 @@ def update_transaction():
 @app.route('/nodes/update_chain', methods=['POST'])
 def update_chain():
     response = flask.request.get_json()
-    blockchain.chain = []
+    g.blockchain.chain = []
     parent_node = response[1]
-    blockchain.nodes.add(parent_node)
+    g.blockchain.nodes.add(parent_node)
     chain_list = response[0]
     hash_list = response[2]
-    blockchain.hash_list = set(hash_list)
+    g.blockchain.hash_list = set(hash_list)
     for chain in chain_list:
-        if chain not in blockchain.chain:
-            blockchain.chain.append(chain)
+        if chain not in g.blockchain.chain:
+            g.blockchain.chain.append(chain)
 
-    return flask.jsonify(f"Added Chain to the network {chain_list} and nodes are {blockchain.nodes}"), 200
+    return flask.jsonify(f"Added Chain to the network {chain_list} and nodes are {g.blockchain.nodes}"), 200
 
 
 @app.route('/delete_node', methods=['POST'])
 def delete_chain():
     response = flask.request.get_json()
-    blockchain.nodes.remove(response.get("node"))
+    g.blockchain.nodes.remove(response.get("node"))
 
     return flask.jsonify(f"removed Node from the network"), 200
 
 
+@app.teardown_appcontext
 def shutdown_session(exception=None):
     database = BlockchainDb()
-    database.save_blockchain(blockchain)
-    database.save_to_firebase()
-    print("Blockchain saved to local file")
+    database.save_blockchain(g.blockchain)
 
-atexit.register(shutdown_session)
-
-
+    host_url = getattr(g, 'host_url', None)  # Get the host URL safely
+    if host_url:
+        for node in g.blockchain.nodes:
+            try:
+                requests.post(f'http://{node}/delete_node', json={"node": host_url}, timeout=5)
+            except requests.exceptions.RequestException as e:
+                print(f"Error notifying node {node}: {e}")
 
 
 # def register_node(port):
 #     print(f"Registering node with port {port}...")
-#     print("nodes" ,blockchain.nodes)
-#     print("nodes type" ,type(blockchain.nodes))
-#     print("chain" ,blockchain.chain)
-#     print("chain type" ,type(blockchain.chain))
-#     blockchain.register('simplicity_server1.onrender.com')
+#     print("nodes" ,g.blockchain.nodes)
+#     print("nodes type" ,type(g.blockchain.nodes))
+#     print("chain" ,g.blockchain.chain)
+#     print("chain type" ,type(g.blockchain.chain))
+#     g.blockchain.register('simplicity_server1.onrender.com')
 
 
 if __name__ == '__main__':

@@ -27,7 +27,6 @@ def hello():
 
 @app.route('/chain', methods=['GET'])
 def chain():
-    print("the length of the blockchain is " + str(len(blockchain.chain)))
     return flask.jsonify({
         'chain': blockchain.chain,
         'length': len(blockchain.chain)
@@ -61,8 +60,8 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node", "simplicity_server.onrender.com")
-        blockchain.register_node(node, "simplicity_server.onrender.com")
+        print("this is parent node", "simplicity_server1.onrender.com")
+        blockchain.register_node(node, "simplicity_server1.onrender.com")
 
     response = {
         'message': 'New nodes have been added',
@@ -80,7 +79,7 @@ def update_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node", "simplicity_server.onrender.com")
+        print("this is parent node", "simplicity_server1.onrender.com")
         if node not in blockchain.nodes:
             blockchain.nodes.add(node)
 
@@ -206,8 +205,7 @@ def delete_chain():
 def shutdown_session(exception=None):
     database = BlockchainDb()
     database.save_blockchain(blockchain)
-    database.save_to_firebase()
-    print("Blockchain saved to local file")
+
 
 atexit.register(shutdown_session)
 

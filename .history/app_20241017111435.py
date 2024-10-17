@@ -7,7 +7,6 @@ import requests
 from blockchain import Blockchain
 from database import BlockchainDb
 from flask_cors import CORS  # Import CORS
-import atexit
 
 app = flask.Flask(__name__)
 from flask import Flask, copy_current_request_context, g, request, jsonify
@@ -27,7 +26,6 @@ def hello():
 
 @app.route('/chain', methods=['GET'])
 def chain():
-    print("the length of the blockchain is " + str(len(blockchain.chain)))
     return flask.jsonify({
         'chain': blockchain.chain,
         'length': len(blockchain.chain)
@@ -61,8 +59,8 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node", "simplicity_server.onrender.com")
-        blockchain.register_node(node, "simplicity_server.onrender.com")
+        print("this is parent node", "simplicity_server1.onrender.com")
+        blockchain.register_node(node, "simplicity_server1.onrender.com")
 
     response = {
         'message': 'New nodes have been added',
@@ -80,7 +78,7 @@ def update_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node", "simplicity_server.onrender.com")
+        print("this is parent node", "simplicity_server1.onrender.com")
         if node not in blockchain.nodes:
             blockchain.nodes.add(node)
 
@@ -203,24 +201,25 @@ def delete_chain():
     return flask.jsonify(f"removed Node from the network"), 200
 
 
+@app.teardown_appcontext
 def shutdown_session(exception=None):
     database = BlockchainDb()
     database.save_blockchain(blockchain)
-    database.save_to_firebase()
-    print("Blockchain saved to local file")
 
-atexit.register(shutdown_session)
+    host_url = getattr(g, 'host_url', None)  # Get the host URL safely
+    if host_url:
+        for node in blockchain.nodes:
+            try:
+                requests.post(f'http://{node}/delete_node', json={"node": host_url}, timeout=5)
+            except requests.exceptions.RequestException as e:
+                print(f"Error notifying node {node}: {e}")
 
 
-
-
-# def register_node(port):
-#     print(f"Registering node with port {port}...")
-#     print("nodes" ,blockchain.nodes)
-#     print("nodes type" ,type(blockchain.nodes))
-#     print("chain" ,blockchain.chain)
-#     print("chain type" ,type(blockchain.chain))
-#     blockchain.register('simplicity_server1.onrender.com')
+def register_node(port):
+    print(f"Registering node with port {port}...")
+    print("nodes" ,blockchain.nodes)
+    print("nodes type" ,type(blockchain.nodes))
+    blockchain.register('simplicity_server1.onrender.com')
 
 
 if __name__ == '__main__':
@@ -229,5 +228,5 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
-    # threading.Thread(target=register_node, args=[port], daemon=True).start()
+    threading.Thread(target=register_node, args=[port], daemon=True).start()
     app.run(host='0.0.0.0', port=port)

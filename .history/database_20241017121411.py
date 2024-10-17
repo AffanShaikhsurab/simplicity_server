@@ -73,12 +73,13 @@ class BlockchainDb:
             ttl = data.get('ttl', blockchain.ttl)
             
             # Rebuild hash_list
+            hash_list = set(blockchain.hash(block) for block in blockchain.chain)
             
-            blockchain.chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in chain).values())
+            blockchain.chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in data['chain']).values())
             if blockchain.current_transactions != []:
-                blockchain.current_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in current_transactions).values())
-            blockchain.nodes =nodes
-            blockchain.ttl = ttl
+                blockchain.current_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in data['current_transactions']).values())
+            blockchain.nodes = set(data['nodes'])
+            blockchain.ttl = data['ttl']
             # Rebuild hash_list
             blockchain.hash_list = set(blockchain.hash(block) for block in blockchain.chain)
             

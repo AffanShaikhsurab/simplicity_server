@@ -58,12 +58,11 @@ class Blockchain:
             if account['privateKey']:
                 self.private_address = account['privateKey']
                 
-        print("the db chain is : ", db_chain)
         if db_chain:
-            chain = self.validate_loaded_chain()
-            print("the validated chain is : ", chain)
-            if chain:
-                self.chain = chain
+            print( self.validate_loaded_chain() )
+            # print("Validated chain: ", validated_chain)  # Check the output here
+            # self.chain = validated_chain
+            print("Assigned chain: ", self.chain)
         
         self.start_scheduled_mining()
     def Blockchain(self , public_address):

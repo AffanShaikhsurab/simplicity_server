@@ -60,10 +60,7 @@ class Blockchain:
                 
         print("the db chain is : ", db_chain)
         if db_chain:
-            chain = self.validate_loaded_chain()
-            print("the validated chain is : ", chain)
-            if chain:
-                self.chain = chain
+            self.chain = self.validate_loaded_chain()
         
         self.start_scheduled_mining()
     def Blockchain(self , public_address):

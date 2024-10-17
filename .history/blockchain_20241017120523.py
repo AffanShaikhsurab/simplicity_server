@@ -60,11 +60,8 @@ class Blockchain:
                 
         print("the db chain is : ", db_chain)
         if db_chain:
-            chain = self.validate_loaded_chain()
-            print("the validated chain is : ", chain)
-            if chain:
-                self.chain = chain
-        
+            self.chain = self.validate_loaded_chain()
+                
         self.start_scheduled_mining()
     def Blockchain(self , public_address):
         self.public_address = public_address
@@ -406,7 +403,6 @@ class Blockchain:
             
 
     def start_scheduled_mining(self):
-        print("the chain is " , self.chain)
         schedule.every(10).minutes.do(self.scheduled_mine)
         threading.Thread(target=self.run_schedule, daemon=True).start()
 

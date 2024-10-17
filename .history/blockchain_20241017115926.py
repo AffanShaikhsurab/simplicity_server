@@ -28,6 +28,9 @@ class Blockchain:
 
 
     def __init__(self):
+        if self._initialized:
+            return
+        self._initialized = True
 
         self.chain = []
         self.current_transactions = []
@@ -58,13 +61,9 @@ class Blockchain:
             if account['privateKey']:
                 self.private_address = account['privateKey']
                 
-        print("the db chain is : ", db_chain)
         if db_chain:
-            chain = self.validate_loaded_chain()
-            print("the validated chain is : ", chain)
-            if chain:
-                self.chain = chain
-        
+            self.chain = self.validate_loaded_chain()
+                
         self.start_scheduled_mining()
     def Blockchain(self , public_address):
         self.public_address = public_address
@@ -114,17 +113,14 @@ class Blockchain:
         """Validate the loaded chain for integrity."""
 
         if len(self.chain) == 0:
-            print("No chain found. Starting with a new chain.")
             return self.chain
         
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
             previous_block = self.chain[i-1]
             if current_block['previous_hash'] != self.hash(previous_block):
-                print("Loaded chain is valid. lenght is " + str(len(self.chain)))
                 return self.chain[:i-1]
             if not self.valid_proof(previous_block['proof'], current_block['proof'] , self.target):
-                print("Loaded chain is valid. lenght is " + str(len(self.chain)))
                 return self.chain[:i-1]
         print("Loaded chain is valid. lenght is " + str(len(self.chain)))
         return self.chain    
@@ -406,7 +402,6 @@ class Blockchain:
             
 
     def start_scheduled_mining(self):
-        print("the chain is " , self.chain)
         schedule.every(10).minutes.do(self.scheduled_mine)
         threading.Thread(target=self.run_schedule, daemon=True).start()
 
