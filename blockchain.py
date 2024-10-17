@@ -159,7 +159,11 @@ class Blockchain(object):
         # Get a random node
         random_node = node_manager.get_random_node()
         nodes = node_manager.load_nodes()
+        print("the nodes are : ", nodes)
+        print("the random node is : ", random_node)
         self.remove_expired_nodes()
+        print("the ip address is : ", self.ip_address)
+        print("nodes after removing expired nodes : ", nodes)
 
         if self.ip_address not in nodes:
             data = {
