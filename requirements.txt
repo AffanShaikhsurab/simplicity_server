@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 pybase64
+=======
+base64
+>>>>>>> c006167 (needs to be tested)
 Flask
 Flask-Cors
 requests
 schedule
 ecdsa
+<<<<<<< HEAD
 firebase-admin
 Flask
 ecdsa
@@ -11,3 +16,7 @@ base58
 starkbank-ecdsa
 elliptic-curve
 Flask-CORS
+=======
+ellipticcurve
+firebase-admin
+>>>>>>> c006167 (needs to be tested)
