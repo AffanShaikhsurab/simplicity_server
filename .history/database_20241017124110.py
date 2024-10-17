@@ -89,32 +89,32 @@ class BlockchainDb:
             print(f"Error loading blockchain from Firebase: {e}")
             return False
 
-    def save_to_firebase(self):
-        """
-        Save the blockchain from the local JSON file to Firebase after deleting the existing data.
-        """
-        try:
-            # Check if the local file exists
-            if not os.path.exists(local_file_path):
-                print("No local data found to save to Firebase.")
-                return
+def save_to_firebase(self):
+    """
+    Save the blockchain from the local JSON file to Firebase after deleting the existing data.
+    """
+    try:
+        # Check if the local file exists
+        if not os.path.exists(local_file_path):
+            print("No local data found to save to Firebase.")
+            return
 
-            # Load the data from the local file
-            with open(local_file_path, 'r') as f:
-                data = json.load(f)
-            
-            # Check if the Firebase reference exists, if not initialize it
-            if not self.ref:
-                self.ref = db.reference('blockchain')
-            
-            # Delete existing data from Firebase
-            print("Deleting existing data from Firebase...")
-            self.ref.delete()  # Deletes all data under 'blockchain' reference
-
-            # Store the new data in Firebase
-            print("Saving new blockchain data to Firebase...")
-            self.ref.set(data)
-            print("Blockchain successfully saved to Firebase.")
+        # Load the data from the local file
+        with open(local_file_path, 'r') as f:
+            data = json.load(f)
         
-        except Exception as e:
-            print(f"Error saving blockchain to Firebase: {e}")
+        # Check if the Firebase reference exists, if not initialize it
+        if not self.ref:
+            self.ref = db.reference('blockchain')
+        
+        # Delete existing data from Firebase
+        print("Deleting existing data from Firebase...")
+        self.ref.delete()  # Deletes all data under 'blockchain' reference
+
+        # Store the new data in Firebase
+        print("Saving new blockchain data to Firebase...")
+        self.ref.set(data)
+        print("Blockchain successfully saved to Firebase.")
+    
+    except Exception as e:
+        print(f"Error saving blockchain to Firebase: {e}")
