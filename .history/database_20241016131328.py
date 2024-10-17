@@ -21,32 +21,29 @@ class BlockchainDb:
         Save the blockchain to Firebase.
 
         :param blockchain: The Blockchain instance to save
-        
         """
-        
-        # self.ref  = db.reference('blockchain')
-        # try:
-        #     unique_chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in blockchain.chain).values())
-        #     unique_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in blockchain.current_transactions).values())
+        try:
+            unique_chain = list(OrderedDict((json.dumps(block, sort_keys=True), block) for block in blockchain.chain).values())
+            unique_transactions = list(OrderedDict((json.dumps(tx, sort_keys=True), tx) for tx in blockchain.current_transactions).values())
 
-        #     if not unique_chain or not unique_transactions:
-        #         print("No data to save to Firebase. Starting with a new blockchain.")
-        #         return
+            if not unique_chain or not unique_transactions:
+                print("No data to save to Firebase. Starting with a new blockchain.")
+                return
 
-        #     # Ensure nodes are stored as hashable types (e.g., converting lists to tuples if necessary)
-        #     hashable_nodes = set(tuple(node) if isinstance(node, list) else node for node in blockchain.nodes)
+            # Ensure nodes are stored as hashable types (e.g., converting lists to tuples if necessary)
+            hashable_nodes = set(tuple(node) if isinstance(node, list) else node for node in blockchain.nodes)
 
-        #     data = {
-        #         'chain': unique_chain,
-        #         'current_transactions': unique_transactions,
-        #         'nodes': list(hashable_nodes),
-        #         'ttl': blockchain.ttl
-        #     }
+            data = {
+                'chain': unique_chain,
+                'current_transactions': unique_transactions,
+                'nodes': list(hashable_nodes),
+                'ttl': blockchain.ttl
+            }
 
-        #     self.ref.set(data)
-        #     print("Blockchain saved to Firebase")
-        # except Exception as e:
-        #     print(f"Error saving blockchain: {e}")
+            self.ref.set(data)
+            print("Blockchain saved to Firebase")
+        except Exception as e:
+            print(f"Error saving blockchain: {e}")
 
     def load_blockchain(self, blockchain):
         """
@@ -69,19 +66,9 @@ class BlockchainDb:
             blockchain.current_transactions = ref.get('current_transactions', [])
 
             # Ensure nodes are converted back to hashable types (set requires hashable types)
-            nodes_list = []
-            ref = db.reference('blockchain')
-            for node in ref.get('nodes', []):
-                available_node  = ref.get(node, "")
-                nodes_list.append(available_node)
-            
-            ref = db.reference('blockchain')
-            
-            print("nodes" ,nodes_list)
-            
-            blockchain.nodes = set(nodes_list)
+            blockchain.nodes = set(tuple(node) if isinstance(node, list) else node for node in ref.get('nodes', []))
             blockchain.ttl = ref.get('ttl', blockchain.ttl)
-            print("ttl" ,  blockchain.ttl )
+
             # Rebuild hash_list
             blockchain.hash_list = set(blockchain.hash(block) for block in blockchain.chain)
 
