@@ -68,6 +68,7 @@ class BlockchainDb:
                 return False
             print("retriving data from firebase")
             blockchain.chain = ref.get('chain', [])
+            print("retrived data from firebase" , ref.get('chain', []))
 
             blockchain.current_transactions = ref.get('current_transactions', [])
 
@@ -80,9 +81,11 @@ class BlockchainDb:
             
             ref = db.reference('blockchain')
             
+            print("nodes" ,nodes_list)
             
             blockchain.nodes = set(nodes_list)
             blockchain.ttl = ref.get('ttl', blockchain.ttl)
+            print("ttl" ,  blockchain.ttl )
             # Rebuild hash_list
             blockchain.hash_list = set(blockchain.hash(block) for block in blockchain.chain)
 
