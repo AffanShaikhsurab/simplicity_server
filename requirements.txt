@@ -1,7 +1,7 @@
 pybase64
 Flask
 Flask-Cors
-requests
+requests==2.21.0
 schedule
 ecdsa
 firebase-admin
