@@ -150,32 +150,37 @@ class Blockchain:
     # The coinbase transaction will be added as the first transaction in the new block
         return total_reward, coinbase_tx
     
-    def register(self , ip_address):
-            # Create a NodeManager instance
-        node_manager = NodeManager()
-        self.ip_address = ip_address
-        # Get a random node
-        random_node = node_manager.get_random_node()
-        nodes = node_manager.load_nodes()
-        print("the nodes are : ", nodes)
-        print("the random node is : ", random_node)
+   def register_node(self, address, current_address):
+        """
+        Adds a new node to the list of nodes
+        
+        :param address: Address of node. Eg. 'http://192.168.0.5:5000'
+        :param current_address: Address of the current node
+        :return: None
+        """
         self.remove_expired_nodes()
-        print("the ip address is : ", self.ip_address)
-        print("nodes after removing expired nodes : ", nodes)
-
-        if self.ip_address not in nodes:
-            data = {
-                    "nodes": [self.ip_address]
-            }
-            print("Registering node : {}".format(ip_address) )
-            requests.post(f'http://{random_node}/nodes/register' , json=data)
-            if self.ttl:
-                requests.post(f'http://{random_node}/nodes/update_ttl' , json={
-                    "updated_nodes": self.ttl,
-                    "node" : self.ip_address
-                })
-        
-        
+        try:
+            parsed_url = urlparse(address)
+            if not parsed_url.netloc:
+                raise ValueError(f"Invalid address: {address}")
+            
+            if parsed_url.netloc not in self.nodes:
+                self.nodes.add(parsed_url.netloc)
+                self.logger.info(f"Added new node: {parsed_url.netloc}")
+            
+            current_url = urlparse(current_address)
+            if not current_url.netloc:
+                raise ValueError(f"Invalid current address: {current_address}")
+            
+            scheme = parsed_url.scheme or 'https'
+            base_url = f'{scheme}://{parsed_url.netloc}'
+            
+            self._update_node(base_url, current_url.netloc)
+            
+        except ValueError as e:
+            self.logger.error(f"Error parsing URL: {e}")
+        except Exception as e:
+            self.logger.exception(f"Unexpected error in register_node: {e}")
         
     
     def register_node(self, address, current_address):
