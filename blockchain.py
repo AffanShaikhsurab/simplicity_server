@@ -13,10 +13,11 @@ import time as t
 from typing import Dict
 from urllib.parse import urlparse
 import schedule
-
+from requests.adapters import HTTPAdapter
 import ecdsa
 import flask
 import requests
+from urllib3 import Retry
 
 from account_db import AccountReader
 from nodeManager import NodeManager
@@ -41,8 +42,11 @@ class Blockchain:
         self.max_block_size = 1000000  
         self.max_mempool = 2
         self.new_block(proof=100, prev_hash=1)
-        self.error = ""
-        
+        self.error = ""        
+        self.session = requests.Session()
+        retries = Retry(total=3, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+        self.session.mount('http://', HTTPAdapter(max_retries=retries))
+        self.session.mount('https://', HTTPAdapter(max_retries=retries))
         database = BlockchainDb()
         db_chain = database.load_blockchain(self)
         
@@ -166,7 +170,7 @@ class Blockchain:
             
             if parsed_url.netloc not in self.nodes:
                 self.nodes.add(parsed_url.netloc)
-                self.logger.info(f"Added new node: {parsed_url.netloc}")
+                print(f"Added new node: {parsed_url.netloc}")
             
             current_url = urlparse(current_address)
             if not current_url.netloc:
@@ -178,11 +182,29 @@ class Blockchain:
             self._update_node(base_url, current_url.netloc)
             
         except ValueError as e:
-            self.logger.error(f"Error parsing URL: {e}")
+            print(f"Error parsing URL: {e}")
         except Exception as e:
-            self.logger.exception(f"Unexpected error in register_node: {e}")
-        
+            print(f"Unexpected error in register_node: {e}")
     
+    def _update_node(self, base_url, current_netloc):
+        try:
+            self.session.post(f'{base_url}/nodes/update_chain', 
+                              json=[self.chain, current_netloc, list(self.hash_list), list(self.nodes)],
+                              timeout=5)
+            
+            self.session.post(f'{base_url}/nodes/update_nodes', 
+                              json={"nodes": list(self.nodes)},
+                              timeout=5)
+            
+            if self.ttl:
+                self.session.post(f'{base_url}/nodes/update_ttl', 
+                                  json={"updated_nodes": self.ttl, "node": current_netloc},
+                                  timeout=5)
+            
+            print(f"Successfully updated node: {base_url}")
+        except requests.RequestException as e:
+            print(f"Error communicating with node {base_url}: {e}")
+
     def register_node(self, address, current_address):
         """
         Adds a new node to the list of nodes
@@ -221,7 +243,7 @@ class Blockchain:
                     requests.post(f'{scheme}://{parsed_url.netloc}/nodes/update_ttl', 
                                   json={"updated_nodes": self.ttl, "node": current_url.netloc},
                                   timeout=5)
-            except RequestException as e:
+            except requests.RequestException as e:
                 print(f"Error communicating with node {parsed_url.netloc}: {e}")
 
         except ValueError as e:
