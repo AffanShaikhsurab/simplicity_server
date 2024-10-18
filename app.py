@@ -62,7 +62,7 @@ def register_nodes():
 
     for node in nodes:
         print("this is parent node", "simplicity_server.onrender.com")
-        blockchain.register_node(node, "simplicity_server.onrender.com")
+        blockchain.register_node(node, "https://simplicity_server.onrender.com")
 
     response = {
         'message': 'New nodes have been added',
