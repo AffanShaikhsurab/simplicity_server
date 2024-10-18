@@ -178,43 +178,52 @@ class Blockchain:
         
         
     
-    def register_node(self , address , current_address):
+    def register_node(self, address, current_address):
         """
         Adds a new node to the list of nodes
-
-        :param address: <str> Address of node. Eg. 'http://192.168.0.5:5000'
-        :return: None
-        """
         
-        #What is netloc?
-        """
-        `netloc` is an attribute of the `ParseResult` object returned by the `urlparse` function in Python's `urllib.parse` module.
-
-        `netloc` contains the network location part of the URL, which includes:
-
-        * The hostname or domain name
-        * The port number (if specified)
-
-        For example, if the URL is `http://example.com:8080/path`, `netloc` would be `example.com:8080`.
-
-        In the context of the original code snippet, `netloc` is used to extract the node's network location (i.e., its hostname or IP address) from the URL.
+        :param address: Address of node. Eg. 'http://192.168.0.5:5000'
+        :param current_address: Address of the current node
+        :return: None
         """
         self.remove_expired_nodes()
 
-        parsed_url = urlparse(address)
-        if parsed_url not  in self.nodes:
-            self.nodes.add(parsed_url)
-        current_url = urlparse(current_address)
-        requests.post(f'http://{parsed_url}/nodes/update_chain' , json=[self.chain , current_url , list(self.hash_list) , list(self.nodes)])
-        requests.post(f'http://{parsed_url}/nodes/update_nodes' , json={
-            "nodes": list(self.nodes)
-        })
-        if self.ttl:
-            requests.post(f'http://{parsed_url}/nodes/update_ttl' , json={
-                    "updated_nodes": self.ttl,
-                    "node" : current_url
-                })
-        
+        try:
+            parsed_url = urlparse(address)
+            if not parsed_url.netloc:
+                raise ValueError(f"Invalid address: {address}")
+
+            if parsed_url.netloc not in self.nodes:
+                self.nodes.add(parsed_url.netloc)
+
+            current_url = urlparse(current_address)
+            if not current_url.netloc:
+                raise ValueError(f"Invalid current address: {current_address}")
+
+            # Use https if the scheme is not specified
+            scheme = parsed_url.scheme or 'https'
+            
+            try:
+                requests.post(f'{scheme}://{parsed_url.netloc}/nodes/update_chain', 
+                              json=[self.chain, current_url.netloc, list(self.hash_list), list(self.nodes)],
+                              timeout=5)
+                
+                requests.post(f'{scheme}://{parsed_url.netloc}/nodes/update_nodes', 
+                              json={"nodes": list(self.nodes)},
+                              timeout=5)
+                
+                if self.ttl:
+                    requests.post(f'{scheme}://{parsed_url.netloc}/nodes/update_ttl', 
+                                  json={"updated_nodes": self.ttl, "node": current_url.netloc},
+                                  timeout=5)
+            except RequestException as e:
+                print(f"Error communicating with node {parsed_url.netloc}: {e}")
+
+        except ValueError as e:
+            print(f"Error parsing URL: {e}")
+        except Exception as e:
+            print(f"Unexpected error in register_node: {e}")
+            
     def remove_expired_nodes(self):
         if self.ttl:
             # Iterate over a copy of the set to avoid modifying it while iterating
