@@ -655,74 +655,14 @@
           }
         }
       ]
-    },
-    {
-      "index": 25,
-      "previous_hash": "09978654f9758635aa934aedb18c7372d4f21e2ed56dedbd0e2ef9b2ed07b8c0",
-      "proof": 89991,
-      "timestamp": 1729334388.556931,
-      "transactions": [
-        {
-          "digital_signature": "MEYCIQDZNXyYB0dLwSj+jpDC4bnTHCGOmQWPbFSmtpH6QehcQAIhAOriogakNXv6Eo4VhB3WtxiEzovAIa1qTHLej3Dk24MF",
-          "public_address": "",
-          "transaction": {
-            "amount": 50.0,
-            "public_address": "",
-            "recipient": "02b91a05153e9ba81b55e1ade91241bf17bfdc1b8f553b0aff35636ec6f7f5078a",
-            "sender": "0",
-            "timestamp": 1729334388.5519323,
-            "transaction_id": "68142b1ed4c4de9c63ef1de4552c0566bfcd4bae7c906de797cc07ae2d3b8efc"
-          }
-        }
-      ]
-    },
-    {
-      "index": 26,
-      "previous_hash": "50fcfcba6e43a537516467137f6a3004af14bbcf7ccc7251c10c3b31d70932a0",
-      "proof": 41327,
-      "timestamp": 1729335531.1852357,
-      "transactions": [
-        {
-          "digital_signature": "MEUCIQCZlTKW+bXEIUr1iPUOi9IUh3dpykElGcMDN1p9yEx/SgIgdtKOSawCHEVVJwxCY3ka80FMJBpm73pYGGDLA+Yp62A=",
-          "public_address": "",
-          "transaction": {
-            "amount": 50.0,
-            "public_address": "",
-            "recipient": "02b91a05153e9ba81b55e1ade91241bf17bfdc1b8f553b0aff35636ec6f7f5078a",
-            "sender": "0",
-            "timestamp": 1729335531.179662,
-            "transaction_id": "235b5bd63ce2fb394d484c93b0cfd82b491f68c471a7ad8e5ac8c670b59c0fac"
-          }
-        }
-      ]
-    },
-    {
-      "index": 26,
-      "previous_hash": "50fcfcba6e43a537516467137f6a3004af14bbcf7ccc7251c10c3b31d70932a0",
-      "proof": 41327,
-      "timestamp": 1729335579.7404246,
-      "transactions": [
-        {
-          "digital_signature": "MEUCIQDvQi9NMQBIuOwvThd+rdgI9gBRRSKU2QD98aHIK8ysTAIgZzhUqtxMb6za9tn7Kzd1meElRKwhYJcQThaD3huiD8s=",
-          "public_address": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
-          "transaction": {
-            "amount": 50.0,
-            "public_address": "02e0cd3cc43abbc54dfa39c89d893b84878041b4c81dfa98deef63e09395fe262a",
-            "recipient": "02b91a05153e9ba81b55e1ade91241bf17bfdc1b8f553b0aff35636ec6f7f5078a",
-            "sender": "0",
-            "timestamp": 1729335579.7325912,
-            "transaction_id": "5e47d8741069024adbc6b0297b4d6bbcf88ffa2f675ce42760a006848b2c5f51"
-          }
-        }
-      ]
     }
   ],
   "current_transactions": [],
-  "nodes": {},
+  "nodes": [
+    "simplicity-server.onrender.com",
+    "simplicity-server1.onrender.com"
+  ],
   "ttl": {
-    "done-safely-merry-fired": 1729357262.5335848,
-    "paint-hang-than-found": 1729356702.2762148,
-    "chat-dictionary-equipment-episode": 1729330602.7764504,
     "simplicity-server1": 1729137155.8219357
   }
 }

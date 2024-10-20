@@ -61,8 +61,8 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","simplicity_server1.onrender.com")
-        blockchain.register_node(node,"simplicity_server1.onrender.com")
+        print("this is parent node", "simplicity_server1.onrender.com")
+        blockchain.register_node(node, "simplicity_server1.onrender.com")
 
     response = {
         'message': 'New nodes have been added',
@@ -80,7 +80,7 @@ def update_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","simplicity_server1.onrender.com")
+        print("this is parent node", "simplicity_server1.onrender.com")
         if node not in blockchain.nodes:
             blockchain.nodes.add(node)
 
@@ -198,14 +198,7 @@ def update_chain():
 @app.route('/delete_node', methods=['POST'])
 def delete_chain():
     response = flask.request.get_json()
-    node = response.get("node")
-    node_url = urlparse(node).netloc
-
-    if node_url in blockchain.nodes :
-        print("Node is already in the network" , blockchain.nodes)
-        blockchain.nodes.remove(node_url)
-        trimed_url = node_url.split('.')[0]
-        blockchain.ttl.pop(trimed_url)
+    blockchain.nodes.remove(response.get("node"))
 
     return flask.jsonify(f"removed Node from the network"), 200
 
@@ -223,7 +216,7 @@ atexit.register(shutdown_session)
 if __name__ == '__main__':
     from argparse import ArgumentParser
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5001, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
     # threading.Thread(target=register_node, args=[port], daemon=True).start()

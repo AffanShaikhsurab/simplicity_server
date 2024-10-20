@@ -61,8 +61,8 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","simplicity_server1.onrender.com")
-        blockchain.register_node(node,"simplicity_server1.onrender.com")
+        print("this is parent node", request.host_url)
+        blockchain.register_node(node, request.host_url)
 
     response = {
         'message': 'New nodes have been added',
@@ -80,7 +80,7 @@ def update_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","simplicity_server1.onrender.com")
+        print("this is parent node", request.host_url)
         if node not in blockchain.nodes:
             blockchain.nodes.add(node)
 
@@ -204,8 +204,6 @@ def delete_chain():
     if node_url in blockchain.nodes :
         print("Node is already in the network" , blockchain.nodes)
         blockchain.nodes.remove(node_url)
-        trimed_url = node_url.split('.')[0]
-        blockchain.ttl.pop(trimed_url)
 
     return flask.jsonify(f"removed Node from the network"), 200
 

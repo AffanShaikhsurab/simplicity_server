@@ -192,7 +192,6 @@ class Blockchain:
                               json=[self.chain, current_netloc, list(self.hash_list), list(self.nodes)],
                               timeout=5)
             
-            
             self.session.post(f'{base_url}/nodes/update_nodes', 
                               json={"nodes": list(self.nodes)},
                               timeout=5)
@@ -295,10 +294,6 @@ class Blockchain:
             for node in list(self.nodes):
                 if node not in self.ttl:
                     self.nodes.remove(node)
-                    if node in self.ttl:
-                        trimed_node = node.split('.')[0]
-                        cleaned_node = trimed_node or node
-                        self.ttl.pop(cleaned_node)
                     continue
                 if int(self.ttl[node]) < int(time()):
                     self.nodes.remove(node)
@@ -356,83 +351,50 @@ class Blockchain:
 
         return True
 
-    def new_block(self, proof, prev_hash, isCoinbase=False, coinbase_transaction=None, miner_address=None):
-        """
-        Creates a new block in the blockchain.
-
-        :param proof: <int> The proof provided by the Proof of Work algorithm.
-        :param prev_hash: (Optional) <str> Hash of the previous block in the chain. If not provided, defaults to the last block's hash.
-        :param isCoinbase: (Optional) <bool> Flag to indicate if this block contains a coinbase transaction (reward for mining).
-        :param coinbase_transaction: (Optional) <dict> Coinbase transaction details (usually the miner's reward).
-        :param miner_address: (Optional) <str> The address of the miner who found the proof of work.
-        :return: <dict> The newly created block.
-        """
-
-        # Debugging: Print proof and previous hash
-        print(f"Creating new block with proof: {proof} and previous hash: {prev_hash}")
+    def new_block(self , proof , prev_hash ,   isCoinbase = False ,coinbase_transaction=None , miner_address=None  ):
         
-        # Constructing the block with necessary details
+        # Creates a new Block in the Blockchain
+        
+        # :param proof: <int> The proof given by the Proof of Work algorithm
+        # :param previous_hash: (Optional) <str> Hash of previous Block
+        # :return: <dict> New Block
+
+
         block = {
-            "index": len(self.chain) + 1,  # Index of the new block
-            "timestamp": time(),  # Current timestamp
-            "transactions": [coinbase_transaction] + self.current_transactions,  # Coinbase transaction and others
-            "proof": proof,  # The proof of work value
-            "previous_hash": prev_hash or self.chain[len(self.chain) - 1]["hash"]  # Previous block's hash
+            "index" : len(self.chain) + 1 ,
+            "timestamp" : time(),
+            "transactions" : [coinbase_transaction] +  self.current_transactions ,
+            "proof" : proof,
+            "previous_hash" : prev_hash or self.chain[len(self.chain) - 1]["hash"]
         }
+    
+        if self.chain and  not self.verify_block(block , self.chain[-1] , self.target , self.max_block_size , isCoinbase):
+            print("Invalid block")
+            return False
 
-        block["hash"] = self.hash(block)  # Add hash to the block
-
-        # Debugging: Print the block before verification
-        print(f"Block before verification: {block}")
         
-        # Validating the newly created block before adding it to the chain
-        if self.chain and not self.verify_block(block, self.chain[-1], self.target, self.max_block_size, isCoinbase):
-            print("Invalid block")  # Debugging: Print if block validation fails
-            return False  # Abort block creation if validation fails
 
-        # If the block is valid, add it to the blockchain
         self.chain.append(block)
-
-        # Debugging: Print the block after adding to chain
-        print(f"Block added to chain: {block}")
-        
-        # Hash the block and add it to the list of known hashes
         hashed_block = self.hash(block)
         self.hash_list.add(hashed_block)
-
-        # Debugging: Print the hashed block
-        print(f"Hashed block: {hashed_block}")
-        
-        # Reset the current list of transactions since they've been included in the block
+        # Reset the current list of transactions
         self.remove_expired_nodes()
-        
-        # Debugging: Print the list of nodes before broadcasting
-        print(f"Broadcasting to nodes: {self.nodes}")
-        
-        # Broadcast the new block to all known nodes in the network
-        for node in self.nodes:
-            # Send the new block data to the node
-            print(f"Sending block to node: {node}")  # Debugging: Print node being sent to
-            requests.post(f'http://{node}/nodes/update_block', json=block)
 
-            # If TTL exists, broadcast the updated TTL and miner information
+        #send data to the konwn nodes in the network
+        for node in self.nodes:
+            requests.post(f'http://{node}/nodes/update_block' , json=block)
             if self.ttl:
-                print(f"Updating TTL for node: {node} with miner address: {miner_address}")  # Debugging: Print TTL update info
-                requests.post(f'http://{node}/nodes/update_ttl', json={
+                requests.post(f'http://{node}/nodes/update_ttl' , json={
                     "updated_nodes": self.ttl,
-                    "node": miner_address
+                    "node" : miner_address
                 })
         
-        # Clear the list of transactions for the next block
+        
         self.current_transactions = []
-        
-        # Debugging: Print confirmation of transaction reset
-        print("Transactions reset after block creation.")
-        
-        # Return the new block as the result
         return block
-
-
+    
+    
+    
 
     def updateTTL(self, updated_nodes: dict, neighbor_node: str):
         """
@@ -448,46 +410,31 @@ class Blockchain:
             def clean_node(node):
                 if isinstance(node, str):
                     parsed = urlparse(node)
-                    netloc = parsed.netloc or parsed.path
-                    # Remove .trycloudflare.com suffix if present
-                    netloc = netloc.replace('.trycloudflare.com', '')
-                    # Remove port if present
-                    netloc = netloc.split(':')[0]
-                    # Remove local URLs
-                    if netloc in ['localhost', '127.0.0.1'] or netloc.startswith('192.168.') or netloc.startswith('10.'):
-                        return None
-                    return netloc
-                return None  # Return None for non-string objects
+                    return parsed.netloc or parsed.path
+                return str(node)  # Convert non-string objects to string
 
             # Clean the neighbor_node
             neighbor_node_cleaned = clean_node(neighbor_node)
-            current_time = 0
-            if neighbor_node_cleaned:
-                print(f"Updating TTL for neighbor node: {neighbor_node_cleaned}")
-                current_time = time()
+            
+            print(f"Updating TTL for neighbor node: {neighbor_node_cleaned}")
+            current_time = time()
 
-                # Update TTL for the neighbor node
-                self.ttl[neighbor_node_cleaned] = current_time + 600
+            # Update TTL for the neighbor node
+            self.ttl[neighbor_node_cleaned] = current_time + 600
 
-            # Remove nodes with expired TTLs and clean existing keys
-            new_ttl = {}
-            for node, ttl in self.ttl.items():
-                cleaned_node = clean_node(node)
-                if cleaned_node and ttl >= current_time:
-                    new_ttl[cleaned_node] = ttl
-            self.ttl = new_ttl
+            # Remove nodes with expired TTLs
+            self.ttl = {clean_node(node): ttl for node, ttl in self.ttl.items() if ttl >= current_time}
 
             # Update TTLs for nodes in updated_nodes
             for node, ttl in updated_nodes.items():
                 node_cleaned = clean_node(node)
-                if node_cleaned:
-                    self.ttl[node_cleaned] = max(self.ttl.get(node_cleaned, 0), ttl)
+                self.ttl[node_cleaned] = max(self.ttl.get(node_cleaned, 0), ttl)
 
             print(f"TTL update completed. Current TTL count: {len(self.ttl)}")
 
         except Exception as e:
             print(f"Error in updateTTL: {str(e)}")
-        
+
     def new_transaction(self, transaction ,  public_address , digital_signature):
         try:
             print("senders key" , transaction["sender"])
@@ -496,13 +443,12 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid sender address"
             return None, self.error
         try:
-            PublicKey.fromCompressed(transaction["recipient"])
+            recipient = PublicKey.fromCompressed(transaction["recipient"])
         except:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
         if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
-            
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,
@@ -593,6 +539,25 @@ class Blockchain:
         
         block_string = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
+    # def verify_signature(self, transaction , public_address , digital_signature):
+    #     """
+    #     Verify the digital signature of the transaction.
+    #     """
+    #     try:
+    #         public_address = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_address), curve=ecdsa.SECP256k1)
+    #         transaction = transaction
+    #         signature = bytes.fromhex(digital_signature)
+            
+    #         # Recreate the transaction data string that was signed
+    #         transaction_string = json.dumps(transaction, sort_keys=True)
+            
+    #         public_address.verify(signature, transaction_string.encode())
+    #         return True
+    #     except (ecdsa.BadSignatureError, ValueError):
+    #         return False
+    
+
+
 
 
     def verify_digital_signature(self, transaction, compressed_public_key, digital_signature_base64):
@@ -642,13 +607,13 @@ class Blockchain:
 
         except ValueError as e:
             logging.error(f"Input validation error: {e}")
-            raise
+            return False
         except SignatureVerificationError as e:
             logging.error(f"Signature verification failed: {e}")
-            raise
+            return False
         except Exception as e:
             logging.error(f"Unexpected error in verify_digital_signature: {e}")
-            raise
+            return False
 
     def sign_transaction(self, transaction):
         message = json.dumps(transaction, sort_keys=True)

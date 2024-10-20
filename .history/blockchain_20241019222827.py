@@ -380,8 +380,6 @@ class Blockchain:
             "previous_hash": prev_hash or self.chain[len(self.chain) - 1]["hash"]  # Previous block's hash
         }
 
-        block["hash"] = self.hash(block)  # Add hash to the block
-
         # Debugging: Print the block before verification
         print(f"Block before verification: {block}")
         
@@ -496,13 +494,12 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid sender address"
             return None, self.error
         try:
-            PublicKey.fromCompressed(transaction["recipient"])
+            recipient = PublicKey.fromCompressed(transaction["recipient"])
         except:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
         if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
-            
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,
@@ -593,6 +590,25 @@ class Blockchain:
         
         block_string = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
+    # def verify_signature(self, transaction , public_address , digital_signature):
+    #     """
+    #     Verify the digital signature of the transaction.
+    #     """
+    #     try:
+    #         public_address = ecdsa.VerifyingKey.from_string(bytes.fromhex(public_address), curve=ecdsa.SECP256k1)
+    #         transaction = transaction
+    #         signature = bytes.fromhex(digital_signature)
+            
+    #         # Recreate the transaction data string that was signed
+    #         transaction_string = json.dumps(transaction, sort_keys=True)
+            
+    #         public_address.verify(signature, transaction_string.encode())
+    #         return True
+    #     except (ecdsa.BadSignatureError, ValueError):
+    #         return False
+    
+
+
 
 
     def verify_digital_signature(self, transaction, compressed_public_key, digital_signature_base64):
@@ -642,13 +658,13 @@ class Blockchain:
 
         except ValueError as e:
             logging.error(f"Input validation error: {e}")
-            raise
+            return False
         except SignatureVerificationError as e:
             logging.error(f"Signature verification failed: {e}")
-            raise
+            return False
         except Exception as e:
             logging.error(f"Unexpected error in verify_digital_signature: {e}")
-            raise
+            return False
 
     def sign_transaction(self, transaction):
         message = json.dumps(transaction, sort_keys=True)
