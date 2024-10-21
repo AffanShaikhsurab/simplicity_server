@@ -80,7 +80,7 @@ def update_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","https://simplicity_server.onrender.com")
+        print("this is parent node","simplicity_server.onrender.com")
         if node not in blockchain.nodes:
             blockchain.nodes.add(node)
 

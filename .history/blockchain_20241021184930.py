@@ -153,7 +153,37 @@ class Blockchain:
 
     # The coinbase transaction will be added as the first transaction in the new block
         return total_reward, coinbase_tx
+    def register(self, ip_address):
+        # Create a NodeManager instance
+        node_manager = NodeManager()
+        ip_address = urlparse(ip_address).netloc
+        self.ip_address = ip_address
+        
+        # Get a random node
+        random_node = node_manager.get_random_node()
+        nodes = node_manager.load_nodes()
+        self.remove_expired_nodes()
+
+        # Validate the random_node URL
+
+        if self.ip_address not in nodes:
+            data = {
+                "nodes": [f'https://{ip_address}']
+            }
+            print(f"Registering node: {self.ip_address} to {random_node}...")
+            print( "the netloc is :{}".format(urlparse(f'https://{ip_address}').netloc)) # urlparse(f'http://self.ip_address').netloc
+
+            # Register the node
+            response = requests.post(f'http://{random_node}/nodes/register', json=data)
+            print()
+            # Update TTL if needed
+            if self.ttl:
+                requests.post(f'http://{random_node}/nodes/update_ttl', json={
+                    "updated_nodes": self.ttl,
+                    "node": f'https://{ip_address}'
+                })
     
+ 
     def register_node(self, address, current_address):
         """
         Adds a new node to the list of nodes

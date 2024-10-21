@@ -247,14 +247,11 @@ class Blockchain:
         for attempt in range(max_retries):
             try:
                 print(
-                    f"sending data to f'{base_url}/nodes/update_chain' on attempt {attempt + 1} wiht data {current_netloc, list(self.hash_list), list(self.nodes)}"
+                    f"sending data to f'{base_url}/nodes/update_chain' on attempt {attempt + 1} wiht data {self.chain, current_netloc, list(self.hash_list), list(self.nodes)}"
                 )
                 response = requests.post(
                     f'{base_url}/nodes/update_chain',
-                    json={
-                        "chain": self.chain,
-                        "hash_list": list(self.hash_list),
-                        },
+                    json=[self.chain, current_netloc, list(self.hash_list), list(self.nodes)],
                     timeout=10
                 )
                 response.raise_for_status()

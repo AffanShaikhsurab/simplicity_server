@@ -61,8 +61,8 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","https://simplicity_server.onrender.com")
-        blockchain.register_node(node,"https://simplicity_server.onrender.com")
+        print("this is parent node","https://https://simplicity_server.onrender.com")
+        blockchain.register_node(node,"https://https://simplicity_server.onrender.com")
 
     response = {
         'message': 'New nodes have been added',

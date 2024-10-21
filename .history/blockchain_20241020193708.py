@@ -251,10 +251,7 @@ class Blockchain:
                 )
                 response = requests.post(
                     f'{base_url}/nodes/update_chain',
-                    json={
-                        "chain": self.chain,
-                        "hash_list": list(self.hash_list),
-                        },
+                    json=[self.chain, current_netloc, list(self.hash_list)],
                     timeout=10
                 )
                 response.raise_for_status()

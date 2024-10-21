@@ -154,7 +154,7 @@ class Blockchain:
     # The coinbase transaction will be added as the first transaction in the new block
         return total_reward, coinbase_tx
     
-    def register_node(self, address, current_address):
+    def register(self, address, current_address):
         """
         Adds a new node to the list of nodes
         
