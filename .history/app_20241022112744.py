@@ -199,7 +199,7 @@ def update_chain():
 def delete_chain():
     response = flask.request.get_json()
     node = response.get("node")
-    node_url :str = urlparse(node).netloc
+    node_url = urlparse(node).netloc
 
     if node_url in blockchain.nodes :
         print("Node is already in the network" , blockchain.nodes)

@@ -417,12 +417,6 @@ class Blockchain:
         
         # Broadcast the new block to all known nodes in the network
         for node in self.nodes:
-            
-            if "simplicity" in node:
-                node = node + ".onrender.com"
-            else:
-                node = node + ".trycloudflare.com"
-                
             # Send the new block data to the node
             print(f"Sending block to node: {node}")  # Debugging: Print node being sent to
             requests.post(f'http://{node}/nodes/update_block', json=block)

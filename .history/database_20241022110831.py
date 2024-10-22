@@ -116,11 +116,7 @@ class BlockchainDb:
             with open(local_file_path, 'r') as f:
                 data = json.load(f)
             nodes = data.get('nodes')
-            print("nodes are ", nodes)
-            
             node_dict = {str(i): node for i, node in enumerate(nodes)}
-            print("node dict is ", node_dict)
-            
             data['nodes'] = node_dict
             if not self.ref:
                 self.ref = db.reference('blockchain')

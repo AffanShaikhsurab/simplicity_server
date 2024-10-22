@@ -417,12 +417,6 @@ class Blockchain:
         
         # Broadcast the new block to all known nodes in the network
         for node in self.nodes:
-            
-            if "simplicity" in node:
-                node = node + ".onrender.com"
-            else:
-                node = node + ".trycloudflare.com"
-                
             # Send the new block data to the node
             print(f"Sending block to node: {node}")  # Debugging: Print node being sent to
             requests.post(f'http://{node}/nodes/update_block', json=block)
@@ -467,8 +461,8 @@ class Blockchain:
                     netloc = netloc.split(':')[0]
                     
                     # Remove .render.com suffix if present
-                    if netloc.endswith('.onrender.com'):
-                        netloc = netloc.replace('.onrender.com', '')
+                    if "." in netloc:
+                        netloc = netloc.split["."][0]
                     # Remove local URLs
                     if netloc in ['localhost', '127.0.0.1'] or netloc.startswith('192.168.') or netloc.startswith('10.'):
                         return None

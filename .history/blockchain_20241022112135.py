@@ -417,12 +417,6 @@ class Blockchain:
         
         # Broadcast the new block to all known nodes in the network
         for node in self.nodes:
-            
-            if "simplicity" in node:
-                node = node + ".onrender.com"
-            else:
-                node = node + ".trycloudflare.com"
-                
             # Send the new block data to the node
             print(f"Sending block to node: {node}")  # Debugging: Print node being sent to
             requests.post(f'http://{node}/nodes/update_block', json=block)
@@ -465,27 +459,21 @@ class Blockchain:
                     netloc = netloc.replace('.trycloudflare.com', '')
                     # Remove port if present
                     netloc = netloc.split(':')[0]
-                    
-                    # Remove .render.com suffix if present
-                    if netloc.endswith('.onrender.com'):
-                        netloc = netloc.replace('.onrender.com', '')
                     # Remove local URLs
                     if netloc in ['localhost', '127.0.0.1'] or netloc.startswith('192.168.') or netloc.startswith('10.'):
                         return None
                     return netloc
                 return None  # Return None for non-string objects
             #add node and coressponding ttl if not exsists already
-            print(f"Current TTL count: {len(self.ttl)}")
-            if self.ttl == "":
-                self.ttl = {}
+            
             for node, ttl in updated_nodes.items():
                 node_cleaned = clean_node(node)
                 if node_cleaned not in self.ttl:
                     self.ttl[node_cleaned] = ttl
                 if node not in self.nodes:
-                    self.nodes.add(node)
+                    self.nodes.append(node)
 
-            print(f"Updated TTL count: {len(self.ttl)}")
+            print(f"Current TTL count: {len(self.ttl)}")
             
             # Clean the neighbor_node
             neighbor_node_cleaned = clean_node(neighbor_node)

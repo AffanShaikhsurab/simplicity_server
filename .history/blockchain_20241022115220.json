@@ -790,31 +790,27 @@
           }
         }
       ]
+    },
+    {
+      "index": 30,
+      "previous_hash": "1a6a13b36a7fbdfb1a4a5ec6da7997fbe06ca44663936146e5f805f6267f2eac",
+      "proof": 30744,
+      "timestamp": 1728920668.7415023,
+      "transactions": [
+        {
+          "digital_signature": "MEYCIQDcgEZY/eOrsC4iyTlg/aWZhN+BCBalHOXSUY/K9Uy6EQIhALEw+hu9GRz/Fu/rJEq7maj2Pj4G3vJ02gKux1gwxoPK",
+          "public_address": "",
+          "transaction": {
+            "amount": 50.0,
+            "public_address": "",
+            "recipient": "",
+            "sender": "0",
+            "timestamp": 1728920668.7384973,
+            "transaction_id": "2a7b20ca45ff119815ef7bc91a641d6a64c0cca6a37f4364596c9346180c8182"
+          }
+        }
+      ]
     }
-  ],
-  "current_transactions": [],
-  "nodes": {
-    "0": "subdivision-seen-proxy-pe",
-    "1": "simplicity_server",
-    "2": "wives-restored-rocks-victorian",
-    "3": "done-safely-merry-fired",
-    "4": "distribution-fitness-grows-hobby",
-    "5": "simplicity_server.onrender.com",
-    "6": "volunteers-up-medicaid-williams",
-    "7": "store-infected-mn-serious",
-    "8": "simplicity-server1",
-    "9": "chat-dictionary-equipment-episode",
-    "10": "paint-hang-than-found"
-  },
-  "ttl": {
-    "simplicity_server": 1729581465.9537668,
-    "chat-dictionary-equipment-episode": 1729330602.7764504,
-    "distribution-fitness-grows-hobby": 1729517574.8110924,
-    "done-safely-merry-fired": 1729357253.7637203,
-    "paint-hang-than-found": 1729356702.2762148,
-    "simplicity-server1": 1729137155.8219357,
-    "store-infected-mn-serious": 1729434167.9724069,
-    "subdivision-seen-proxy-pe": 1729527976.167244,
-    "wives-restored-rocks-victorian": 1729526933.2999365
-  }
+  ]
+  
 }

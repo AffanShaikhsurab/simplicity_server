@@ -417,7 +417,6 @@ class Blockchain:
         
         # Broadcast the new block to all known nodes in the network
         for node in self.nodes:
-            
             if "simplicity" in node:
                 node = node + ".onrender.com"
             else:
