@@ -90,7 +90,7 @@ class BlockchainDb:
         Save the blockchain to a temporary file.
         """
         try:
-            with open('./temp/'+local_file_path, 'r') as f:
+            with open(local_file_path, 'r') as f:
                 data = json.load(f)
             
             self.temp_file = tempfile.NamedTemporaryFile(mode='w+', delete=False)
@@ -158,10 +158,9 @@ class BlockchainDb:
             # Update nodes individually
             nodes_ref = self.ref.child('nodes')
             existing_nodes = nodes_ref.get() or {}
-            existing_node_values = set(existing_nodes)
+            existing_node_values = set(existing_nodes.values())
             
             print("Updating nodes...")
-            
             new_nodes = new_data.get('nodes', {}).values()
             for node in new_nodes:
                 if node not in existing_node_values:

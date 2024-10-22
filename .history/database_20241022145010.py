@@ -157,13 +157,21 @@ class BlockchainDb:
 
             # Update nodes individually
             nodes_ref = self.ref.child('nodes')
-            existing_nodes = nodes_ref.get() or {}
-            existing_node_values = set(existing_nodes)
+            print(f"New nodes: {nodes_ref}")
+            existing_nodes = nodes_ref.get() or {} 
+            print(f"New nodes: {existing_nodes}  , type: {type(existing_nodes)}")
+            existing_node_values = []
+            
+            for node in existing_nodes:
+                existing_node_values.append(
+                    self.ref.child('nodes').child(node).get()
+                )
             
             print("Updating nodes...")
             
             new_nodes = new_data.get('nodes', {}).values()
-            for node in new_nodes:
+            print(f"New nodes: {new_nodes}")
+            for node in existing_nodes:
                 if node not in existing_node_values:
                     try:
                         new_node_key = str(len(existing_nodes))

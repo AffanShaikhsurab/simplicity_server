@@ -35,12 +35,8 @@ def periodic_save():
 # Start the background save thread
 save_thread = threading.Thread(target=periodic_save, daemon=True)
 save_thread.start()
-
-
 @app.route('/hello', methods=['GET'])
 def hello():
-    """Get all nodes in the network. This endpoint is useful for auto-discovery of nodes."""
-    
     return flask.jsonify({
         'nodes': list(blockchain.nodes),
         'length': len(list(blockchain.nodes))
@@ -233,10 +229,6 @@ def delete_chain():
 
 
 def shutdown_session(exception=None):
-    """Cleanup function to run when the server shuts down"""
-    global should_continue
-    should_continue = False  # Signal the background thread to stop
-    
     # blockchain.resolve_conflicts()
     database = BlockchainDb()
     database.save_blockchain(blockchain)
