@@ -479,7 +479,7 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
-        if self.valid_transaction(transaction  , public_address , digital_signature) :
+        if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,

@@ -70,7 +70,7 @@ class Blockchain:
                 self.chain = chain
                 print("the  finall chain is : ", len(self.chain))
         
-        # self.start_scheduled_mining()
+        self.start_scheduled_mining()
     def Blockchain(self , public_address):
         self.public_address = public_address
     
@@ -479,7 +479,7 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
-        if self.valid_transaction(transaction  , public_address , digital_signature) :
+        if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,
@@ -703,7 +703,6 @@ class Blockchain:
         
         for block in self.chain:
             for transaction in block['transactions']:
-                print("recipient: ", transaction['transaction']['recipient'])
                 if transaction['transaction']['recipient'] == sender_address:
                     sender_balance += transaction['transaction']['amount']
                     print(f"Sender balance: {sender_balance}")

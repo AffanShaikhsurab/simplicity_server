@@ -64,13 +64,13 @@ class Blockchain:
                 
         print("the db chain is : ", db_chain)
         if db_chain:
-            print("the  db chain len is : ", len(self.chain))
-            chain = self.valid_chain(self.chain)
+            chain = self.validate_loaded_chain()
+            print("the validated chain is : ", len(chain))
             if chain:
                 self.chain = chain
                 print("the  finall chain is : ", len(self.chain))
         
-        # self.start_scheduled_mining()
+        self.start_scheduled_mining()
     def Blockchain(self , public_address):
         self.public_address = public_address
     
@@ -479,7 +479,7 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
-        if self.valid_transaction(transaction  , public_address , digital_signature) :
+        if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,
@@ -682,7 +682,9 @@ class Blockchain:
         current_index = 1
         while current_index < len(chain):
             block = chain[current_index]
-
+            print(f'{last_block}')
+            print(f'{block}')
+            print("\n-----------\n")
             # Check that the hash of the block is correct
             if block['previous_hash'] != self.hash(last_block):
                 return False
@@ -699,25 +701,19 @@ class Blockchain:
         sender_balance = 0 
         sender_address = transaction['sender']
         sender_amount = transaction['amount']
-        print(f"Sender address: {sender_address} , Sender amount: {sender_amount}")
         
         for block in self.chain:
             for transaction in block['transactions']:
-                print("recipient: ", transaction['transaction']['recipient'])
                 if transaction['transaction']['recipient'] == sender_address:
                     sender_balance += transaction['transaction']['amount']
-                    print(f"Sender balance: {sender_balance}")
                 if transaction['transaction']['sender'] == sender_address:
                     sender_balance -= transaction['transaction']['amount']
-                    print(f"Sender balance: {sender_balance}")
                     
         for tx in self.current_transactions:
             if tx['transaction']['recipient'] == sender_address:
                 sender_balance += tx['amount']
             if tx['transaction']['sender'] == sender_address:
-                sender_balance -= tx['transaction']['amount'] 
-                 
-        print(f"Sender balance: {sender_balance}")
+                sender_balance -= tx['transaction']['amount']  
         if  sender_balance >= sender_amount:
             return True
         else:

@@ -47,8 +47,8 @@ class Blockchain:
         retries = Retry(total=3, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
         self.session.mount('http://', HTTPAdapter(max_retries=retries))
         self.session.mount('https://', HTTPAdapter(max_retries=retries))
-        self.database = BlockchainDb()
-        db_chain = self.database.load_blockchain(self)
+        database = BlockchainDb()
+        db_chain = database.load_blockchain(self)
         
         self.mining_thread = None
         self.should_mine = False
@@ -64,13 +64,13 @@ class Blockchain:
                 
         print("the db chain is : ", db_chain)
         if db_chain:
-            print("the  db chain len is : ", len(self.chain))
-            chain = self.valid_chain(self.chain)
+            chain = self.validate_loaded_chain()
+            print("the validated chain is : ", len(chain))
             if chain:
                 self.chain = chain
                 print("the  finall chain is : ", len(self.chain))
         
-        # self.start_scheduled_mining()
+        self.start_scheduled_mining()
     def Blockchain(self , public_address):
         self.public_address = public_address
     
@@ -129,11 +129,11 @@ class Blockchain:
             previous_block = self.chain[i-1]
             if current_block['previous_hash'] != self.hash(previous_block):
                 print("Loaded chain is valid. lenght is " + str(len(self.chain)))
-                self.database.save_valid_chain(self.chain[:i-1] )
+                BlockchainDb.save_valid_chain(self ,self.chain[:i-1] )
                 return self.chain[:i-1]
             if not self.valid_proof(previous_block['proof'], current_block['proof'] , self.target):
                 print("Loaded chain is valid. lenght is " + str(len(self.chain)))
-                self.database.save_valid_chain(self.chain[:i-1] )
+                BlockchainDb.save_valid_chain(self ,self.chain[:i-1] )
                 return self.chain[:i-1]
         print("Loaded chain is valid. lenght is " + str(len(self.chain)))
         return self.chain    
@@ -479,7 +479,7 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
-        if self.valid_transaction(transaction  , public_address , digital_signature) :
+        if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,
@@ -682,7 +682,9 @@ class Blockchain:
         current_index = 1
         while current_index < len(chain):
             block = chain[current_index]
-
+            print(f'{last_block}')
+            print(f'{block}')
+            print("\n-----------\n")
             # Check that the hash of the block is correct
             if block['previous_hash'] != self.hash(last_block):
                 return False
@@ -699,25 +701,19 @@ class Blockchain:
         sender_balance = 0 
         sender_address = transaction['sender']
         sender_amount = transaction['amount']
-        print(f"Sender address: {sender_address} , Sender amount: {sender_amount}")
         
         for block in self.chain:
             for transaction in block['transactions']:
-                print("recipient: ", transaction['transaction']['recipient'])
                 if transaction['transaction']['recipient'] == sender_address:
                     sender_balance += transaction['transaction']['amount']
-                    print(f"Sender balance: {sender_balance}")
                 if transaction['transaction']['sender'] == sender_address:
                     sender_balance -= transaction['transaction']['amount']
-                    print(f"Sender balance: {sender_balance}")
                     
         for tx in self.current_transactions:
             if tx['transaction']['recipient'] == sender_address:
                 sender_balance += tx['amount']
             if tx['transaction']['sender'] == sender_address:
-                sender_balance -= tx['transaction']['amount'] 
-                 
-        print(f"Sender balance: {sender_balance}")
+                sender_balance -= tx['transaction']['amount']  
         if  sender_balance >= sender_amount:
             return True
         else:
