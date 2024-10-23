@@ -456,12 +456,13 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid sender address"
             return None, self.error
         try:
-            recipient = PublicKey.fromCompressed(transaction["recipient"])
+            PublicKey.fromCompressed(transaction["recipient"])
         except:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
         if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
+            
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,
@@ -470,25 +471,22 @@ class Blockchain:
             self.miner()
             # send transactions to the known nodes in the network
             self.remove_expired_nodes()
-            
-            
             for node in self.nodes:
-                node = self.addUrl(node)
                 requests.post(f'http://{node}/nodes/update_transaction', json={
                 "transaction": transaction,
                 "public_address": public_address,
                 "digital_signature": digital_signature
             })
-            
-                if self.ttl:
-                    requests.post(f'http://{node}/nodes/update_ttl' , json={
-                        "updated_nodes": self.ttl,
-                        "node" : self.ip_address
-                    })
+            if self.ttl:
+                requests.post(f'http://{node}/nodes/update_ttl' , json={
+                    "updated_nodes": self.ttl,
+                    "node" : request.host_url
+                })
             return self.last_block['index'] + 1, "Successful Transaction"
         else:
             return None, self.error
             
+
     def start_scheduled_mining(self):
         print("the chain is " , self.chain)
         schedule.every(10).minutes.do(self.scheduled_mine)

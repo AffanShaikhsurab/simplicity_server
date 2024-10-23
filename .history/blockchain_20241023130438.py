@@ -306,15 +306,16 @@ class Blockchain:
         # Debugging: Print proof and previous hash
         print(f"Creating new block with proof: {proof} and previous hash: {prev_hash}")
         
-        transactions = [coinbase_transaction] + self.current_transactions
         # Constructing the block with necessary details
         block = {
             "index": len(self.chain) + 1,  # Index of the new block
             "timestamp": time(),  # Current timestamp
-            "transactions": transactions or [],  # Coinbase transaction and others
+            "transactions": [coinbase_transaction] + self.current_transactions,  # Coinbase transaction and others
             "proof": proof,  # The proof of work value
             "previous_hash": prev_hash or self.chain[len(self.chain) - 1]["hash"]  # Previous block's hash
         }
+
+        block["hash"] = self.hash(block)  # Add hash to the block
 
         # Debugging: Print the block before verification
         print(f"Block before verification: {block}")
@@ -337,35 +338,30 @@ class Blockchain:
         # Debugging: Print the hashed block
         print(f"Hashed block: {hashed_block}")
         
-        print(f"Broadcasting to nodes: {list(self.nodes)}\nBroadcasting to nodes")
         # Reset the current list of transactions since they've been included in the block
         self.remove_expired_nodes()
+        
         # Debugging: Print the list of nodes before broadcasting
-        print(f"Broadcasting to nodes: {list(self.nodes)}\nBroadcasting to nodes")
-
-        for node , ttl in self.ttl.items():
-            if ttl > time():
-                self.nodes.add(node)
+        print(f"Broadcasting to nodes: {self.nodes}")
         
         # Broadcast the new block to all known nodes in the network
         for node in self.nodes:
             
-            node = self.addUrl(node)
-            
+            if "simplicity" in node:
+                node = node + ".onrender.com"
+            else:
+                node = node + ".trycloudflare.com"
+                
             # Send the new block data to the node
-            print(f"Sending block to node: {f'https://{node}/nodes/update_block'} wiht data {block}")  # Debugging: Print node being sent to
-            response = requests.post(f'http://{node}/nodes/update_block', json=block)
-            print(
-                f"Response status code: {response.status_code}\n"
-                f"Response content: {response.content}\n"
-                f"Response headers: {response.headers}"
-            )
+            print(f"Sending block to node: {node}")  # Debugging: Print node being sent to
+            requests.post(f'http://{node}/nodes/update_block', json=block)
+
             # If TTL exists, broadcast the updated TTL and miner information
             if self.ttl:
                 print(f"Updating TTL for node: {node} with miner address: {miner_address}")  # Debugging: Print TTL update info
                 requests.post(f'http://{node}/nodes/update_ttl', json={
                     "updated_nodes": self.ttl,
-                    "node": self.ip_address
+                    "node": miner_address
                 })
         
         # Clear the list of transactions for the next block
@@ -376,6 +372,7 @@ class Blockchain:
         
         # Return the new block as the result
         return block
+
 
 
     def updateTTL(self, updated_nodes: dict, neighbor_node: str):
@@ -414,8 +411,8 @@ class Blockchain:
                 node_cleaned = clean_node(node)
                 if node_cleaned not in self.ttl:
                     self.ttl[node_cleaned] = ttl
-                if node_cleaned not in self.nodes:
-                    self.nodes.add(node_cleaned)
+                if node not in self.nodes:
+                    self.nodes.add(node)
 
             print(f"Updated TTL count: {len(self.ttl)}")
             
@@ -456,12 +453,13 @@ class Blockchain:
             self.error = "Transaction will not be added to Block due to invalid sender address"
             return None, self.error
         try:
-            recipient = PublicKey.fromCompressed(transaction["recipient"])
+            PublicKey.fromCompressed(transaction["recipient"])
         except:
             self.error = "Transaction will not be added to Block due to invalid recipient address"
             return None, self.error
         
         if self.valid_transaction(transaction  , public_address , digital_signature) or sender == "0":
+            
             self.current_transactions.append({
                 "transaction": transaction,
                 "public_address": public_address,
@@ -470,25 +468,22 @@ class Blockchain:
             self.miner()
             # send transactions to the known nodes in the network
             self.remove_expired_nodes()
-            
-            
             for node in self.nodes:
-                node = self.addUrl(node)
                 requests.post(f'http://{node}/nodes/update_transaction', json={
                 "transaction": transaction,
                 "public_address": public_address,
                 "digital_signature": digital_signature
             })
-            
-                if self.ttl:
-                    requests.post(f'http://{node}/nodes/update_ttl' , json={
-                        "updated_nodes": self.ttl,
-                        "node" : self.ip_address
-                    })
+            if self.ttl:
+                requests.post(f'http://{node}/nodes/update_ttl' , json={
+                    "updated_nodes": self.ttl,
+                    "node" : request.host_url
+                })
             return self.last_block['index'] + 1, "Successful Transaction"
         else:
             return None, self.error
             
+
     def start_scheduled_mining(self):
         print("the chain is " , self.chain)
         schedule.every(10).minutes.do(self.scheduled_mine)
