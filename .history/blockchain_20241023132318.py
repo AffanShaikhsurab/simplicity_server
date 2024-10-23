@@ -200,9 +200,7 @@ class Blockchain:
         # add .onrender.com or .trycloudflare.com
         neighbor_url = self.addUrl(neighbor_url)
         
-        requests.post(f'http://{neighbor_url}/nodes/update_chain' , json={
-            "chain": self.chain  , "hash_list" : list(self.hash_list)
-            })
+        requests.post(f'http://{neighbor_url}/nodes/update_chain' , json=[self.chain , current_url , list(self.hash_list) , list(self.nodes)])
         requests.post(f'http://{neighbor_url}/nodes/update_nodes' , json={
             "nodes": list(self.nodes)
         })
@@ -506,7 +504,7 @@ class Blockchain:
             
     def start_scheduled_mining(self):
         print("the chain is " , self.chain)
-        schedule.every(30).minutes.do(self.scheduled_mine)
+        schedule.every(10).minutes.do(self.scheduled_mine)
         threading.Thread(target=self.run_schedule, daemon=True).start()
 
     def run_schedule(self):

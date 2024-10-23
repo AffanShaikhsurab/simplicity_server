@@ -83,8 +83,8 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","https://simplicity-server1.onrender.com")
-        blockchain.register_node(node,"https://simplicity-server1.onrender.com")
+        print("this is parent node","https://tribal-values-origin-differ.trycloudflare.com")
+        blockchain.register_node(node,"https://tribal-values-origin-differ.trycloudflare.com")
 
     response = {
         'message': 'New nodes have been added',
@@ -102,7 +102,7 @@ def update_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        print("this is parent node","https://simplicity-server1.onrender.com")
+        print("this is parent node","https://tribal-values-origin-differ.trycloudflare.com")
         if node not in blockchain.nodes:
             blockchain.nodes.add(node)
 
@@ -185,8 +185,6 @@ def update_transaction():
     # Send data to the known nodes in the network
     failed_nodes = []
     for node in blockchain.nodes:
-        node = blockchain.addUrl(node)
-
         try:
             response = requests.post(f'http://{node}/nodes/update_transaction', json=transaction, timeout=5)
             if response.status_code != 200:

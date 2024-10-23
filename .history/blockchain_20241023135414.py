@@ -506,7 +506,7 @@ class Blockchain:
             
     def start_scheduled_mining(self):
         print("the chain is " , self.chain)
-        schedule.every(30).minutes.do(self.scheduled_mine)
+        schedule.every(10).minutes.do(self.scheduled_mine)
         threading.Thread(target=self.run_schedule, daemon=True).start()
 
     def run_schedule(self):
