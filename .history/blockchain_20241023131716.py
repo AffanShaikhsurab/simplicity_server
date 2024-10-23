@@ -153,20 +153,7 @@ class Blockchain:
 
     # The coinbase transaction will be added as the first transaction in the new block
         return total_reward, coinbase_tx
-    def addUrl(self, url : str ):
-        if "simplicity" in url :
-            if not url.endswith(".onrender.com"):
-                url = url + ".onrender.com"
-            else:
-                url = url + ".trycloudflare.com"
-        return url
     
-    
-    def cleanUrl(self , url : str ):
-        removed_https = url.replace("https://","")
-        removed_dot = removed_https.split(".")[0]
-        return removed_dot
-                
     def register_node(self , neighbor_url , current_address):
         """
         Adds a new node to the list of nodes
