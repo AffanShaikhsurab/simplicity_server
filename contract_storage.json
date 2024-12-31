@@ -1,0 +1,97 @@
+{
+  "counter": {
+    "contract_name": "counter",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "count": {
+        "type": "int",
+        "value": 5
+      },
+      "save": {
+        "type": "Number",
+        "value": 6
+      }
+    }
+  },
+  "counter1": {
+    "contract_name": "counter1",
+    "symbol_table": null
+  },
+  "counter2": {
+    "contract_name": "counter2",
+    "symbol_table": null
+  },
+  "counter3": {
+    "contract_name": "counter3",
+    "symbol_table": null
+  },
+  "counter4": {
+    "contract_name": "counter4",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "save": {
+        "type": "Number",
+        "value": 6
+      }
+    }
+  },
+  "counter5": {
+    "contract_name": "counter5",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "count": {
+        "type": "Number",
+        "value": 20
+      }
+    }
+  },
+  "counter6": {
+    "contract_name": "counter6",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      }
+    }
+  },
+  "wallet": {
+    "contract_name": "wallet",
+    "symbol_table": null
+  },
+  "wallet1": {
+    "contract_name": "wallet1",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      }
+    }
+  },
+  "wallet2": {
+    "contract_name": "wallet2",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "balance": {
+        "type": "Number",
+        "value": 10
+      },
+      "wallet": {
+        "type": "Unknown",
+        "node_type": "list",
+        "str_value": "[[([(('balance', 'IDENTIFIER') (<simplyLang.praser.VariableAccessNode object at 0x00000227304B2C90> + <simplyLang.praser.VariableAccessNode object at 0x00000227304B1AD0>) , True), <simplyLang.praser.ReturnNode object at 0x00000227304B2AD0>]), ([(if (<simplyLang.praser.VariableAccessNode object at 0x00000227304B1590> > <simplyLang.praser.VariableAccessNode object at 0x00000227304B1950>) then [(('balance', 'IDENTIFIER') (<simplyLang.praser.VariableAccessNode object at 0x00000227304B1150> - <simplyLang.praser.VariableAccessNode object at 0x00000227304B1310>) , True), <simplyLang.praser.ReturnNode object at 0x00000227304B2C10>] otherwise [<simplyLang.praser.ReturnExprNode object at 0x00000227304B1490>])]), ([<simplyLang.praser.ReturnNode object at 0x00000227304B00D0>])], ['amount']]"
+      }
+    }
+  }
+}

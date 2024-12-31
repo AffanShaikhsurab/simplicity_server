@@ -1,0 +1,23 @@
+{
+  "counter": {
+    "contract_name": "counter",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "count": {
+        "type": "int",
+        "value": 5
+      }
+    }
+  },
+  "counter1": {
+    "contract_name": "counter1",
+    "symbol_table": null
+  },
+  "counter2": {
+    "contract_name": "counter2",
+    "symbol_table": null
+  }
+}
