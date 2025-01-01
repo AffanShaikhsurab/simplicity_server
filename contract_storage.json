@@ -1,4 +1,110 @@
 {
+  "0600cea4ae02443467a9925c47ecdfaaef5a98d4a72fa112e1c4435a7b8c77f2": {
+    "contract_name": "0600cea4ae02443467a9925c47ecdfaaef5a98d4a72fa112e1c4435a7b8c77f2",
+    "symbol_table": null
+  },
+  "422c3bd0b98e9d7ff6bb5e5bca347cf254352fd6a6f91cff2f37ddd40f30f4a1": {
+    "contract_name": "422c3bd0b98e9d7ff6bb5e5bca347cf254352fd6a6f91cff2f37ddd40f30f4a1",
+    "symbol_table": null
+  },
+  "5b047adb9b5ccd6e64f789b2fc505315219defd0d944c72159d774e7c24170a9": {
+    "contract_name": "5b047adb9b5ccd6e64f789b2fc505315219defd0d944c72159d774e7c24170a9",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "balance": {
+        "type": "Number",
+        "value": 3
+      }
+    }
+  },
+  "5b423643750ab340bbea299e7e70690274ed80e518f7d2c08742c60aebd56712": {
+    "contract_name": "5b423643750ab340bbea299e7e70690274ed80e518f7d2c08742c60aebd56712",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "balance": {
+        "type": "Number",
+        "value": 5
+      }
+    }
+  },
+  "5d2b2bc52a05d2c22fa6d0f1f822a25761687132337687e6b2183665253223f3": {
+    "contract_name": "5d2b2bc52a05d2c22fa6d0f1f822a25761687132337687e6b2183665253223f3",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "wallet": {
+        "type": "Unknown",
+        "node_type": "list",
+        "str_value": "[[([(('balance', 'IDENTIFIER') (<simplyLang.praser.VariableAccessNode object at 0x0000020004EA3350> + <simplyLang.praser.VariableAccessNode object at 0x0000020004EA3390>) , True), <simplyLang.praser.ReturnNode object at 0x0000020004EA3110>]), ([(if (<simplyLang.praser.VariableAccessNode object at 0x0000020004EA3590> > <simplyLang.praser.VariableAccessNode object at 0x0000020004EA35D0>) then [(('balance', 'IDENTIFIER') (<simplyLang.praser.VariableAccessNode object at 0x0000020004EA3710> - <simplyLang.praser.VariableAccessNode object at 0x0000020004EA36D0>) , True), <simplyLang.praser.ReturnNode object at 0x0000020004EA3610>] otherwise [<simplyLang.praser.ReturnExprNode object at 0x0000020004EA3750>])]), ([<simplyLang.praser.TransferNode object at 0x0000020004EA3810>, <simplyLang.praser.ReturnExprNode object at 0x0000020004EA3850>])], ['amount', 'address']]"
+      }
+    }
+  },
+  "638bc63ae093bbfcc0761438d1ec40c5b799c2c40fdd2e44e3b15f5bb09bb9f9": {
+    "contract_name": "638bc63ae093bbfcc0761438d1ec40c5b799c2c40fdd2e44e3b15f5bb09bb9f9",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      },
+      "balance": {
+        "type": "Number",
+        "value": 3
+      }
+    }
+  },
+  "78f9a50f0e0b138228787cc8d3f213893b41d720f7c4f1d861d7308787f8dd34": {
+    "contract_name": "78f9a50f0e0b138228787cc8d3f213893b41d720f7c4f1d861d7308787f8dd34",
+    "symbol_table": null
+  },
+  "848c7b65ae4612806aa1b08716315a70f833e2a869b5b4fb56b56b0b6bfa0994": {
+    "contract_name": "848c7b65ae4612806aa1b08716315a70f833e2a869b5b4fb56b56b0b6bfa0994",
+    "symbol_table": null
+  },
+  "8a0939040f4e5059f9d21d28b68e3944277d5f0f108e09b3f9308608eab8ec11": {
+    "contract_name": "8a0939040f4e5059f9d21d28b68e3944277d5f0f108e09b3f9308608eab8ec11",
+    "symbol_table": null
+  },
+  "8c118801e1a0a52d6daed76ddd79952cf55f63fc97accecac5736991469673bf": {
+    "contract_name": "8c118801e1a0a52d6daed76ddd79952cf55f63fc97accecac5736991469673bf",
+    "symbol_table": null
+  },
+  "8d129280d69393d2eff6eb9e6d260175ecab4d04efadcb66a7a63e067ee7237e": {
+    "contract_name": "8d129280d69393d2eff6eb9e6d260175ecab4d04efadcb66a7a63e067ee7237e",
+    "symbol_table": null
+  },
+  "95e2289c5083f07d1a7bd7bf21336714b38590fe012a59ca782200aacc7bac5e": {
+    "contract_name": "95e2289c5083f07d1a7bd7bf21336714b38590fe012a59ca782200aacc7bac5e",
+    "symbol_table": null
+  },
+  "9cf02dbfbdafbd4bd040dde4696c4d7404ccaacaa21f133505226970688f6fc2": {
+    "contract_name": "9cf02dbfbdafbd4bd040dde4696c4d7404ccaacaa21f133505226970688f6fc2",
+    "symbol_table": null
+  },
+  "b86f17d0e137e384f0f6e7392d09d3bf9385fac4f5ef6e68624e4b4951388085": {
+    "contract_name": "b86f17d0e137e384f0f6e7392d09d3bf9385fac4f5ef6e68624e4b4951388085",
+    "symbol_table": null
+  },
+  "b91479845ce22159bfef3d26f51bb298fd638f2e586d6b207357621fdef4b64c": {
+    "contract_name": "b91479845ce22159bfef3d26f51bb298fd638f2e586d6b207357621fdef4b64c",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      }
+    }
+  },
+  "ce5f19d3d2d5898eaa54d06efed9e2d1f2f45df4681e741d59cd568a2a8bff44": {
+    "contract_name": "ce5f19d3d2d5898eaa54d06efed9e2d1f2f45df4681e741d59cd568a2a8bff44",
+    "symbol_table": null
+  },
   "counter": {
     "contract_name": "counter",
     "symbol_table": {
@@ -63,6 +169,27 @@
       }
     }
   },
+  "d10b71cb40e4a0622241153375d93afa2ac00b316ade998c95389adcdf796a93": {
+    "contract_name": "d10b71cb40e4a0622241153375d93afa2ac00b316ade998c95389adcdf796a93",
+    "symbol_table": null
+  },
+  "e5e4ac60025fd4e43ac8219a8371a7324bb1350067a227b968cfceb73f8bba44": {
+    "contract_name": "e5e4ac60025fd4e43ac8219a8371a7324bb1350067a227b968cfceb73f8bba44",
+    "symbol_table": null
+  },
+  "e5ffe0d4176f2a2c08b7f0123cf28ec5f67cfe932e43e60c298b430327d7b9e8": {
+    "contract_name": "e5ffe0d4176f2a2c08b7f0123cf28ec5f67cfe932e43e60c298b430327d7b9e8",
+    "symbol_table": {
+      "NULL": {
+        "type": "Number",
+        "value": 0
+      }
+    }
+  },
+  "f8f3654137da2df77b82fee2f5de667cb536edfd5380074a7d921a2dd0c8352b": {
+    "contract_name": "f8f3654137da2df77b82fee2f5de667cb536edfd5380074a7d921a2dd0c8352b",
+    "symbol_table": null
+  },
   "wallet": {
     "contract_name": "wallet",
     "symbol_table": null
@@ -77,21 +204,7 @@
     }
   },
   "wallet2": {
-    "contract_name": "wallet2",
-    "symbol_table": {
-      "NULL": {
-        "type": "Number",
-        "value": 0
-      },
-      "balance": {
-        "type": "Number",
-        "value": 10
-      },
-      "wallet": {
-        "type": "Unknown",
-        "node_type": "list",
-        "str_value": "[[([(('balance', 'IDENTIFIER') (<simplyLang.praser.VariableAccessNode object at 0x00000227304B2C90> + <simplyLang.praser.VariableAccessNode object at 0x00000227304B1AD0>) , True), <simplyLang.praser.ReturnNode object at 0x00000227304B2AD0>]), ([(if (<simplyLang.praser.VariableAccessNode object at 0x00000227304B1590> > <simplyLang.praser.VariableAccessNode object at 0x00000227304B1950>) then [(('balance', 'IDENTIFIER') (<simplyLang.praser.VariableAccessNode object at 0x00000227304B1150> - <simplyLang.praser.VariableAccessNode object at 0x00000227304B1310>) , True), <simplyLang.praser.ReturnNode object at 0x00000227304B2C10>] otherwise [<simplyLang.praser.ReturnExprNode object at 0x00000227304B1490>])]), ([<simplyLang.praser.ReturnNode object at 0x00000227304B00D0>])], ['amount']]"
-      }
-    }
+    "contract_name": "68e3101635066010a9e4fe3b15faa4c36292c3070b29fd03f1dfa5a4ef161c9f",
+    "symbol_table": null
   }
 }
